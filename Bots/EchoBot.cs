@@ -1,5 +1,16 @@
 ﻿using EchoBot1.Modelos;
 using EchoBot1.Servicos;
+using Microsoft.Bot.Builder;
+using Microsoft.Bot.Schema;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EchoBot1.Bots
 {
@@ -17,6 +28,7 @@ namespace EchoBot1.Bots
             _knowledgeBase = knowledgeBase;
             _knowledgeBase.LoadResponses("C:\\Users\\synys\\Desktop\\1\\");
         }
+
 
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
@@ -46,6 +58,14 @@ namespace EchoBot1.Bots
                     botResponse = "Por favor insira o nome do grupo que deseja adicionar à base de conhecimento, seguido da nova base de conhecimento. Formato: Entidade: <entidade> grupo: <grupo> = <chave> = <resposta>";
                     await turnContext.SendActivityAsync(MessageFactory.Text(botResponse), cancellationToken);
                     return;
+                case "help":
+                  
+                    botResponse += "\n\nVocê pode entrar em modo de aprendizagem digitando 'modo aprendizagem'";
+                    botResponse += "\n\nVocê pode apagar a conversa atual digitando 'apagar' ou reiniciar a conversa digitando 'reiniciar'";
+                    botResponse += "\n\nVocê pode obter ajuda digitando 'help'";
+
+
+                    break;
 
                 default:
                     var chatContextEntity = await _storageHelper.GetEntityAsync<GptResponseEntity>(_configuration["StorageAcc:GPTContextTable"], turnContext.Activity.From.Id, turnContext.Activity.Conversation.Id);
@@ -112,14 +132,10 @@ namespace EchoBot1.Bots
             {
                 string response = null;
 
-
-
-
                 response = _knowledgeBase.GetResponse(matchingKeys[0]);
 
-
-
                 await turnContext.SendActivityAsync(MessageFactory.Text(response), cancellationToken);
+ // adicionar ao chat context para gravar tambem as respostas do conhecimento na storage
                 chatContext.Messages.Add(new Message() { Role = "assistant", Content = response });
             }
             else
@@ -146,6 +162,7 @@ namespace EchoBot1.Bots
                 RowKey = turnContext.Activity.Conversation.Id,
                 UserContext = JsonConvert.SerializeObject(chatContext.Messages)
             });
+    
         }
 
 
@@ -197,7 +214,7 @@ namespace EchoBot1.Bots
             var reply = MessageFactory.Attachment(attachments);
 
             reply.Attachments.Add(heroCard.ToAttachment());
-
+            
 
             foreach (var member in membersAdded)
             {

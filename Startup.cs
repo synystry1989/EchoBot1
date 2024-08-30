@@ -1,5 +1,7 @@
 ﻿// Generated with Bot Builder V4 SDK Template for Visual Studio EchoBot v4.22.0
 
+using bot.Dialogs.Bot.Dialogs;
+using bot.Dialogs;
 using EchoBot1.Modelos;
 using EchoBot1.Servicos;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +12,7 @@ using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SendGrid;
 
 namespace EchoBot1
 {
@@ -35,9 +38,35 @@ namespace EchoBot1
 
             // Create the Bot Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
+
             services.AddTransient<KnowledgeBase>();
             services.AddSingleton<IStorageHelper,StorageHelper>();
+          
+            services.AddSingleton<UserProfile>();
+            // Configuração do UserState e ConversationState
+            services.AddSingleton<UserState>();
+            services.AddSingleton<ConversationState>();
+            // Configuração do MemoryStorage
+            services.AddSingleton<IStorage, MemoryStorage>();
 
+       
+            // Adicionar diálogos
+            services.AddTransient<IssueResolutionDialog>();
+            services.AddTransient<OrderDialog>();
+            services.AddTransient<SupportDialog>();
+            services.AddTransient<EmailDialog>();
+            services.AddTransient<InvoiceDialog>();
+            services.AddTransient<PersonalDataDialog>();
+            services.AddTransient<MainMenuDialog>();
+
+            services.AddSingleton<ISendGridClient>(provider =>
+            {
+                var apiKey = Configuration["SendGrid:ApiKey"];
+                return new SendGridClient(apiKey);
+            });
+
+            // Configuração do UserProfileService
+            services.AddSingleton<UserProfileService>();
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
             services.AddTransient<IBot, Bots.EchoBot>();
         }
