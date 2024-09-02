@@ -1,7 +1,8 @@
 ﻿// Generated with Bot Builder V4 SDK Template for Visual Studio EchoBot v4.22.0
 
-using bot.Dialogs.Bot.Dialogs;
+
 using bot.Dialogs;
+using EchoBot1.Dialogs;
 using EchoBot1.Modelos;
 using EchoBot1.Servicos;
 using Microsoft.AspNetCore.Builder;
@@ -34,6 +35,20 @@ namespace EchoBot1
             });
 
             // Create the Bot Framework Authentication to be used with the Bot Adapter.
+      
+      
+         
+            // Create the Bot Adapter with error handling enabled.
+            services.AddSingleton<DatabaseService>();
+            services.AddSingleton<InvoiceService>();
+            services.AddSingleton<EmailService>();
+            services.AddSingleton<SystemService>();
+            services.AddSingleton<OrderService>();
+            services.AddTransient<InvoiceActions>();
+            // Configuração do UserProfileService
+            services.AddSingleton<UserProfileService>();
+            services.AddSingleton<BotState, ConversationState>();
+            services.AddSingleton<BotState, UserState>();
             services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
 
             // Create the Bot Adapter with error handling enabled.
@@ -44,17 +59,20 @@ namespace EchoBot1
           
             services.AddSingleton<UserProfile>();
             // Configuração do UserState e ConversationState
-            services.AddSingleton<UserState>();
-            services.AddSingleton<ConversationState>();
+   
             // Configuração do MemoryStorage
             services.AddSingleton<IStorage, MemoryStorage>();
+            services.AddTransient<EmailDialog>(provider =>
+            {
+                return new EmailDialog("your-string-value");
+            });
 
-       
+
             // Adicionar diálogos
             services.AddTransient<IssueResolutionDialog>();
             services.AddTransient<OrderDialog>();
             services.AddTransient<SupportDialog>();
-            services.AddTransient<EmailDialog>();
+          
             services.AddTransient<InvoiceDialog>();
             services.AddTransient<PersonalDataDialog>();
             services.AddTransient<MainMenuDialog>();
@@ -65,8 +83,7 @@ namespace EchoBot1
                 return new SendGridClient(apiKey);
             });
 
-            // Configuração do UserProfileService
-            services.AddSingleton<UserProfileService>();
+        
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
             services.AddTransient<IBot, Bots.EchoBot>();
         }

@@ -1,12 +1,13 @@
 ﻿namespace bot.Dialogs
 {
-    using bot.Dialogs.Bot.Dialogs;
+    using bot.Dialogs;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Schema;
     using System.Threading;
     using System.Threading.Tasks;
 
+    
 
     public class OrderDialog : ComponentDialog
     {

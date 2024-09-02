@@ -80,15 +80,15 @@
             },
             "Microsoft.Bot.Builder.Integration.AspNet.Core": {
               "target": "Package",
-              "version": "[4.22.0, )"
+              "version": "[4.22.7, )"
+            },
+            "Microsoft.Bot.Configuration": {
+              "target": "Package",
+              "version": "[4.22.7, )"
             },
             "Microsoft.Bot.Connector": {
               "target": "Package",
               "version": "[4.22.7, )"
-            },
-            "Microsoft.Data.SqlClient": {
-              "target": "Package",
-              "version": "[5.2.2, )"
             },
             "Microsoft.Identity.Client": {
               "target": "Package",
@@ -121,10 +121,6 @@
             "SendGrid": {
               "target": "Package",
               "version": "[9.29.3, )"
-            },
-            "System.Data.SqlClient": {
-              "target": "Package",
-              "version": "[4.8.6, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",

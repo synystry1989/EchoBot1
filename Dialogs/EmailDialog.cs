@@ -1,6 +1,6 @@
 ﻿namespace bot.Dialogs
 {
-    using bot.Dialogs.Bot.Dialogs;
+    using bot.Dialogs;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Schema;
@@ -30,6 +30,10 @@
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             InitialDialogId = nameof(WaterfallDialog);
+        }
+
+        public EmailDialog(string dialogId = null) : base(dialogId)
+        {
         }
 
         private async Task<DialogTurnResult> AskForRecipientEmailStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)

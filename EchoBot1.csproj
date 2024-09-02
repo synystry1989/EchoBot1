@@ -11,8 +11,11 @@
     <PackageReference Include="Catalyst.Spacy" Version="1.0.51118" />
     <PackageReference Include="DotNetCore.NPOI" Version="1.2.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Bot.Builder" Version="4.22.7" />
     <PackageReference Include="Microsoft.Bot.Builder.Dialogs" Version="4.22.7" />
-    <PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.22.0" />
+    <PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.22.7" />
+    <PackageReference Include="Microsoft.Bot.Configuration" Version="4.22.7" />
+    <PackageReference Include="Microsoft.Bot.Connector" Version="4.22.7" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.63.0" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.1" />
     <PackageReference Include="MimeKit" Version="4.7.1" />

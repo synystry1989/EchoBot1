@@ -1,6 +1,6 @@
 ﻿namespace bot.Dialogs
 {
-    using bot.Dialogs.Bot.Dialogs;
+
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Dialogs.Choices;
