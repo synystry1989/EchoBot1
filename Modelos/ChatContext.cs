@@ -1,18 +1,22 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-
 namespace EchoBot1.Modelos
 {
     public class ChatContext
     {
+        
+
         [JsonProperty("model")]
         public string? Model { get; set; }
 
         [JsonProperty("messages")]
-
         public List<Message> Messages { get; set; }
 
+        public ChatContext()
+        {
+            Messages = new List<Message>();
+        }
     }
 
     public class Message
@@ -22,7 +26,5 @@ namespace EchoBot1.Modelos
 
         [JsonProperty("content")]
         public string Content { get; set; }
-     
-
     }
 }

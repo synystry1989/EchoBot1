@@ -15,5 +15,7 @@ namespace EchoBot1.Modelos
 
         public ETag ETag { get; set; } = default;
 
+
     }
+    
 }
