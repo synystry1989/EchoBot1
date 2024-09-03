@@ -13,13 +13,16 @@ namespace EchoBot1.Servicos
         private readonly TableClient _tableClient;
         private readonly StorageHelper _storageHelper;
 
+
         public UserProfileService(IConfiguration configuration, string tableName, StorageHelper storageHelper)
         {
             _storageHelper = storageHelper;
-            var serviceClient = new TableServiceClient(configuration["ConnectionStrings:StorageAcc"]);
+            var serviceClient = new TableServiceClient(configuration["StorageAcc:UserProfiles"]);
             _tableClient = serviceClient.GetTableClient(tableName);
             _tableClient.CreateIfNotExists();
         }
+
+     
 
         public async Task UpsertUserProfileAsync(UserProfileEntity userProfile)
         {

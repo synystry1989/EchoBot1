@@ -1,14 +1,28 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EchoBot1.Services
+namespace EchoBot1.Servicos
 {
-    public class KnowledgeBase
+    public class KnowledgeLearningBaseService
     {
         private readonly Dictionary<string, string> _responses = new Dictionary<string, string>();
+        private readonly object _lock = new object();  // Lock object for thread safety
+
+        private readonly string _knowledgeBasePath;
+
+        public KnowledgeLearningBaseService(IConfiguration configuration)
+        {
+            _knowledgeBasePath = configuration["KnowledgeBase:Path"];
+
+            if (string.IsNullOrEmpty(_knowledgeBasePath) || !Directory.Exists(_knowledgeBasePath))
+            {
+                throw new DirectoryNotFoundException("O diretório da base de conhecimento não foi encontrado.");
+            }
+        }
 
         public List<string> SearchKeys(string userInput)
         {
@@ -17,11 +31,14 @@ namespace EchoBot1.Services
 
             var matchingKeys = new List<string>();
 
-            foreach (var key in _responses.Keys)
+            lock (_lock)  // Ensure thread safety while accessing _responses
             {
-                if (userInput.Contains(key, StringComparison.OrdinalIgnoreCase))
+                foreach (var key in _responses.Keys)
                 {
-                    matchingKeys.Add(key);
+                    if (userInput.Contains(key, StringComparison.OrdinalIgnoreCase))
+                    {
+                        matchingKeys.Add(key);
+                    }
                 }
             }
 
@@ -49,9 +66,12 @@ namespace EchoBot1.Services
                             var key = parts[0].Trim().ToLower();
                             var response = parts[1].Trim();
 
-                            if (!_responses.ContainsKey(key))
+                            lock (_lock)  // Ensure thread safety while modifying _responses
                             {
-                                _responses[key] = response;
+                                if (!_responses.ContainsKey(key))
+                                {
+                                    _responses[key] = response;
+                                }
                             }
                         }
                     }
@@ -66,10 +86,13 @@ namespace EchoBot1.Services
 
             var matchingKeys = SearchKeys(userInput);
 
-            if (matchingKeys.Count > 0)
+            lock (_lock)  // Ensure thread safety while accessing _responses
             {
-                response = _responses[matchingKeys[0].ToLower()];
-                return true;
+                if (matchingKeys.Count > 0)
+                {
+                    response = _responses[matchingKeys[0].ToLower()];
+                    return true;
+                }
             }
 
             response = null;
@@ -130,7 +153,10 @@ namespace EchoBot1.Services
                     }
                 }
 
-                _responses[key.ToLower()] = response;
+                lock (_lock)  // Ensure thread safety while modifying _responses
+                {
+                    _responses[key.ToLower()] = response;
+                }
             }
             catch (IOException ioEx)
             {

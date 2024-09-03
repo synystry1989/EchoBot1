@@ -2,19 +2,19 @@
 using Microsoft.Bot.Schema;
 using System.Threading;
 using System.Threading.Tasks;
-using EchoBot1.Services;
+using EchoBot1.Servicos;
 using System;
 using System.IO;
 using Microsoft.Bot.Builder;
 
 namespace EchoBot1.Dialogs
 {
-    public class LearningDialog : ComponentDialog
+    public class KnowledgeLearningBaseDialog : ComponentDialog
     {
-        private readonly KnowledgeBase _knowledgeBase;
+        private readonly KnowledgeLearningBaseService _knowledgeBase;
         private readonly string _localPath;
 
-        public LearningDialog(KnowledgeBase knowledgeBase, string localPath) : base(nameof(LearningDialog))
+        public KnowledgeLearningBaseDialog(KnowledgeLearningBaseService knowledgeBase, string localPath) : base(nameof(KnowledgeLearningBaseDialog))
         {
             _knowledgeBase = knowledgeBase ?? throw new ArgumentNullException(nameof(knowledgeBase));
             _localPath = localPath ?? throw new ArgumentNullException(nameof(localPath));
@@ -43,18 +43,24 @@ namespace EchoBot1.Dialogs
             if (stepContext.Result is string userInput && !string.IsNullOrWhiteSpace(userInput))
             {
                 var separators = new[] { ':', '=' };
-                var parts = userInput.Split(separators, 6);
+                var parts = userInput.Split(separators, 6, StringSplitOptions.TrimEntries);
 
                 if (parts.Length == 6)
                 {
-                    var entidade = parts[1].Trim().ToLower();
-                    var grupo = parts[3].Trim().ToLower();
-                    var key = parts[4].Trim().ToLower();
-                    var response = parts[5].Trim().ToLower();
+                    var entidade = parts[1].ToLower();
+                    var grupo = parts[3].ToLower();
+                    var key = parts[4].ToLower();
+                    var response = parts[5];
 
                     try
                     {
+                        // Verifica se o caminho local é válido
                         string entityPath = Path.Combine(_localPath, entidade);
+                        if (!Directory.Exists(entityPath))
+                        {
+                            Directory.CreateDirectory(entityPath);
+                        }
+
                         await _knowledgeBase.AddOrUpdateResponseAsync(entityPath, entidade, grupo, key, response, cancellationToken);
                         await stepContext.Context.SendActivityAsync(MessageFactory.Text("Entrada adicionada ou atualizada com sucesso."), cancellationToken);
                     }

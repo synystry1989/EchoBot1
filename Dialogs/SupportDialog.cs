@@ -5,13 +5,19 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Bot.Builder.Dialogs.Choices;
 using Microsoft.Bot.Builder;
+using EchoBot1.Servicos;
+using System;  // Certifique-se de importar o namespace para SupportService
 
 namespace EchoBot1.Dialogs
 {
     public class SupportDialog : ComponentDialog
     {
-        public SupportDialog() : base(nameof(SupportDialog))
+        private readonly SupportService _supportService;
+
+        public SupportDialog(SupportService supportService) : base(nameof(SupportDialog))
         {
+            _supportService = supportService ?? throw new ArgumentNullException(nameof(supportService));
+
             var waterfallSteps = new WaterfallStep[]
             {
                 AskForSupportTopicStepAsync,
@@ -46,13 +52,16 @@ namespace EchoBot1.Dialogs
         {
             var choice = ((FoundChoice)stepContext.Result).Value;
             var supportTopic = (string)stepContext.Values["supportTopic"];
+            var userId = stepContext.Context.Activity.From.Id; // Obtém o ID do usuário
 
             if (choice.ToLower() == "sim")
             {
+                await _supportService.NotifyLiveSupportAgentAsync(userId, supportTopic);  // Notifica o agente humano
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text("Um de nossos assistentes entrará em contato em breve para suporte ao vivo."), cancellationToken);
             }
             else
             {
+                await _supportService.RegisterSupportRequestAsync(userId, supportTopic, false);  // Registra a solicitação de suporte
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text($"Você solicitou suporte para: {supportTopic}. Um de nossos assistentes entrará em contato em breve."), cancellationToken);
             }
 

@@ -6,14 +6,14 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EchoBot1.Services
+namespace EchoBot1.Modelos
 {
-    public class OpenAIService : IOpenAIService
+    public class OpenAiEntity : IOpenAIService
     {
         private readonly IConfiguration _configuration;
         private readonly HttpClient _httpClient;
 
-        public OpenAIService(IConfiguration configuration, HttpClient httpClient)
+        public OpenAiEntity(IConfiguration configuration, HttpClient httpClient)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
@@ -27,7 +27,7 @@ namespace EchoBot1.Services
             var requestBody = new
             {
                 model = _configuration["OpenAI:Model"],
-                prompt = prompt,
+                prompt,
                 max_tokens = int.Parse(_configuration["OpenAI:MaxTokens"]),
                 temperature = float.Parse(_configuration["OpenAI:Temperature"]),
                 top_p = float.Parse(_configuration["OpenAI:TopP"]),

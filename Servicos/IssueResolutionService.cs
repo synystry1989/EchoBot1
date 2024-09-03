@@ -2,7 +2,7 @@
 {
     using System.Threading.Tasks;
 
-    public class SystemService
+    public class IssueResolutionService
     {
         public Task<bool> CheckSystemAsync()
         {
