@@ -1,64 +1,73 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Azure.Data.Tables;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using EchoBot1.Modelos;
+using Azure;
 
 namespace EchoBot1.Servicos
 {
     public class UserProfileService
     {
-        private static readonly List<UserProfile> _userProfiles = new List<UserProfile>();
+        private readonly TableClient _tableClient;
+        private readonly StorageHelper _storageHelper;
 
-        // Criar um novo perfil de usuário
-        public async Task<UserProfile> CreateUserProfileAsync(UserProfile userProfile)
+        public UserProfileService(IConfiguration configuration, string tableName, StorageHelper storageHelper)
         {
-            _userProfiles.Add(userProfile);
-            await Task.Delay(100); // Simula um atraso de operação
-            return userProfile;
+            _storageHelper = storageHelper;
+            var serviceClient = new TableServiceClient(configuration["ConnectionStrings:StorageAcc"]);
+            _tableClient = serviceClient.GetTableClient(tableName);
+            _tableClient.CreateIfNotExists();
         }
 
-        // Atualizar um perfil de usuário existente
-        public async Task<bool> UpdateUserProfileAsync(UserProfile updatedUserProfile)
+        public async Task UpsertUserProfileAsync(UserProfileEntity userProfile)
         {
-            var existingProfile = _userProfiles.FirstOrDefault(p => p.UserId == updatedUserProfile.UserId);
-            if (existingProfile == null)
+            if (userProfile == null)
             {
-                return false; // Perfil não encontrado
+                throw new ArgumentNullException(nameof(userProfile));
             }
 
-            existingProfile.Name = updatedUserProfile.Name;
-            existingProfile.Email = updatedUserProfile.Email;
-            existingProfile.Address = updatedUserProfile.Address;
-            existingProfile.PhoneNumber = updatedUserProfile.PhoneNumber;
-          
-
-            await Task.Delay(100); // Simula um atraso de operação
-            return true;
+            await _tableClient.UpsertEntityAsync(userProfile, TableUpdateMode.Replace);
         }
 
-        // Consultar um perfil de usuário pelo ID
-        public async Task<UserProfile> GetUserProfileByIdAsync(string userId)
+        public async Task<UserProfileEntity> GetUserProfileAsync(string userId)
         {
-            var userProfile = _userProfiles.FirstOrDefault(p => p.UserId == userId);
-            await Task.Delay(100); // Simula um atraso de operação
-            return userProfile;
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentException("User ID cannot be null or empty.");
+            }
+
+            try
+            {
+                var response = await _tableClient.GetEntityAsync<UserProfileEntity>(userId, userId);
+                return response?.Value;
+            }
+            catch (RequestFailedException ex) when (ex.Status == 404)
+            {
+                return null; // Usuário não encontrado
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving user profile: {ex.Message}");
+                throw;
+            }
         }
 
-        // Consultar todos os perfis de usuários
-        public async Task<IEnumerable<UserProfile>> GetAllUserProfilesAsync()
+        public async Task UpdatePersonalDataAsync(UserProfileEntity userProfile)
         {
-            await Task.Delay(100); // Simula um atraso de operação
-            return _userProfiles;
+            if (userProfile == null)
+            {
+                throw new ArgumentNullException(nameof(userProfile));
+            }
+
+            await UpsertUserProfileAsync(userProfile);
+        }
+
+        // Método para recuperar todas as conversas de um usuário
+        public async Task<IEnumerable<ChatContext>> GetConversationsForUserAsync(string userId)
+        {
+            return await _storageHelper.GetEntitiesByPartitionKeyAsync<ChatContext>("Conversations", userId);
         }
     }
-    public class UserProfile
-    {
-        public string UserId { get; set; } // Identificador único do usuário
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Address { get; set; }
-        public string PhoneNumber { get; set; }
-
-    }
-
-
 }

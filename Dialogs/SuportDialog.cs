@@ -1,23 +1,22 @@
-﻿namespace bot.Dialogs
+﻿using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Schema;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Microsoft.Bot.Builder.Dialogs.Choices;
+using Microsoft.Bot.Builder;
+
+namespace EchoBot1.Dialogs
 {
-
-    using Microsoft.Bot.Builder;
-    using Microsoft.Bot.Builder.Dialogs;
-    using Microsoft.Bot.Builder.Dialogs.Choices;
-    using Microsoft.Bot.Schema;
-    using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
-
     public class SupportDialog : ComponentDialog
     {
         public SupportDialog() : base(nameof(SupportDialog))
         {
             var waterfallSteps = new WaterfallStep[]
             {
-            AskForSupportTopicStepAsync,
-            OfferLiveSupportStepAsync,
-            ConfirmSupportRequestStepAsync
+                AskForSupportTopicStepAsync,
+                OfferLiveSupportStepAsync,
+                ConfirmSupportRequestStepAsync
             };
 
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
@@ -57,11 +56,7 @@
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text($"Você solicitou suporte para: {supportTopic}. Um de nossos assistentes entrará em contato em breve."), cancellationToken);
             }
 
-            return await stepContext.ReplaceDialogAsync(nameof(MainMenuDialog), null, cancellationToken);
-
+            return await stepContext.EndDialogAsync(null, cancellationToken);
         }
     }
-
 }
-
-

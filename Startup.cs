@@ -1,32 +1,23 @@
-﻿// Generated with Bot Builder V4 SDK Template for Visual Studio EchoBot v4.22.0
-
-
-using bot.Dialogs;
+﻿using EchoBot1.Bots;
 using EchoBot1.Dialogs;
-using EchoBot1.Modelos;
-using EchoBot1.Servicos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Connector.Authentication;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SendGrid;
+using EchoBot1.Services;
+using EchoBot1.Servicos;
+using Microsoft.Extensions.Logging;
+using bot.Dialogs;
+using static bot.Dialogs.CancelOrderDialog;
+
 
 namespace EchoBot1
 {
     public class Startup
-    { 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
+    {
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient().AddControllers().AddNewtonsoftJson(options =>
@@ -34,61 +25,53 @@ namespace EchoBot1
                 options.SerializerSettings.MaxDepth = HttpHelper.BotMessageSerializerSettings.MaxDepth;
             });
 
-            // Create the Bot Framework Authentication to be used with the Bot Adapter.
-      
-      
-         
-            // Create the Bot Adapter with error handling enabled.
-            services.AddSingleton<DatabaseService>();
-            services.AddSingleton<InvoiceService>();
-            services.AddSingleton<EmailService>();
-            services.AddSingleton<SystemService>();
-            services.AddSingleton<OrderService>();
-            services.AddTransient<InvoiceActions>();
-            // Configuração do UserProfileService
-            services.AddSingleton<UserProfileService>();
-            services.AddSingleton<BotState, ConversationState>();
-            services.AddSingleton<BotState, UserState>();
+            // Bot Framework Authentication
             services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
 
-            // Create the Bot Adapter with error handling enabled.
+            // Adapter
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
-            services.AddTransient<KnowledgeBase>();
-            services.AddSingleton<IStorageHelper,StorageHelper>();
-          
-            services.AddSingleton<UserProfile>();
-            // Configuração do UserState e ConversationState
-   
-            // Configuração do MemoryStorage
+            // State storage
             services.AddSingleton<IStorage, MemoryStorage>();
-            services.AddTransient<EmailDialog>(provider =>
-            {
-                return new EmailDialog("your-string-value");
-            });
+            services.AddSingleton<UserState>();
+            services.AddSingleton<ConversationState>();
 
+            // Services
+            services.AddSingleton<UserProfileService>();
+            services.AddSingleton<KnowledgeBase>();
+            services.AddSingleton<OpenAIService>();
+            services.AddSingleton<InvoiceActions>();
+            services.AddSingleton<OrderService>();
+            services.AddSingleton<IStorageHelper, StorageHelper>();
+            services.AddSingleton<SystemService>();
+            services.AddSingleton<EmailService>();
 
-            // Adicionar diálogos
-            services.AddTransient<IssueResolutionDialog>();
-            services.AddTransient<OrderDialog>();
-            services.AddTransient<SupportDialog>();
-          
-            services.AddTransient<InvoiceDialog>();
-            services.AddTransient<PersonalDataDialog>();
-            services.AddTransient<MainMenuDialog>();
+            // Dialogs
+            services.AddSingleton<MainDialog>();
+            services.AddSingleton<WelcomeBot>();
+            services.AddSingleton<LearningDialog>();
+            services.AddSingleton<EmpresarialDialog>();
+            services.AddSingleton<PersonalDataDialog>();
+            services.AddSingleton<EmailDialog>();
+            services.AddSingleton<InvoiceDialog>();
+            services.AddSingleton<SupportDialog>();
+            services.AddSingleton<OrderDialog>();
+            services.AddSingleton<CancelOrderDialog>();
+            services.AddSingleton<ModifyOrderDialog>();
+            services.AddSingleton<IssueResolutionDialog>();
 
-            services.AddSingleton<ISendGridClient>(provider =>
-            {
-                var apiKey = Configuration["SendGrid:ApiKey"];
-                return new SendGridClient(apiKey);
-            });
-
-        
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, Bots.EchoBot>();
+            services.AddTransient<IBot, DialogBot<MainDialog>>(sp =>
+            {
+                var conversationState = sp.GetRequiredService<ConversationState>();
+                var userState = sp.GetRequiredService<UserState>();
+                var mainDialog = sp.GetRequiredService<MainDialog>();
+                var logger = sp.GetRequiredService<ILogger<DialogBot<MainDialog>>>();
+
+                return new DialogBot<MainDialog>(conversationState, userState, mainDialog, logger);
+            });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -105,8 +88,6 @@ namespace EchoBot1
                 {
                     endpoints.MapControllers();
                 });
-
-            // app.UseHttpsRedirection();
         }
     }
 }

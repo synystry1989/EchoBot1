@@ -1,29 +1,47 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace EchoBot1.Modelos
+namespace EchoBot1.Services
 {
     public class KnowledgeBase
     {
-        private readonly Dictionary<string, List<string>> _responses;
+        private readonly Dictionary<string, string> _responses = new Dictionary<string, string>();
 
-        public KnowledgeBase()
+        public List<string> SearchKeys(string userInput)
         {
-            _responses = new Dictionary<string, List<string>>();
+            if (string.IsNullOrWhiteSpace(userInput))
+                throw new ArgumentException("User input cannot be null or whitespace.", nameof(userInput));
+
+            var matchingKeys = new List<string>();
+
+            foreach (var key in _responses.Keys)
+            {
+                if (userInput.Contains(key, StringComparison.OrdinalIgnoreCase))
+                {
+                    matchingKeys.Add(key);
+                }
+            }
+
+            return matchingKeys;
         }
 
-        // Load responses from text files into the knowledge base
-        public void LoadResponses(string folderPath)
+        public async Task LoadResponsesAsync(string folderPath)
         {
+            if (string.IsNullOrWhiteSpace(folderPath))
+                throw new ArgumentException("Folder path cannot be null or whitespace.", nameof(folderPath));
+
             var files = Directory.GetFiles(folderPath, "*.txt", SearchOption.AllDirectories);
 
             foreach (var file in files)
             {
-                using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read))
+                using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
                 using (var streamReader = new StreamReader(fileStream))
                 {
                     string line;
-                    while ((line = streamReader.ReadLine()) != null)
+                    while ((line = await streamReader.ReadLineAsync()) != null)
                     {
                         var parts = line.Split(new[] { '=' }, 2);
                         if (parts.Length == 2)
@@ -33,102 +51,95 @@ namespace EchoBot1.Modelos
 
                             if (!_responses.ContainsKey(key))
                             {
-                                _responses[key] = new List<string>();
+                                _responses[key] = response;
                             }
-                            _responses[key].Add(response);  // Add response to the list
                         }
                     }
                 }
             }
         }
 
-        // Retrieve a response based on user input
-        public string GetResponse(string userInput)
+        public bool TryGetResponse(string userInput, out string response)
         {
-            var key = userInput.ToLower();
-            if (_responses.ContainsKey(key))
-            {
-                // Join all responses for the key into a single string
-                return string.Join("\n", _responses[key]);
-            }
-            return null;
-        }
+            if (string.IsNullOrWhiteSpace(userInput))
+                throw new ArgumentException("User input cannot be null or whitespace.", nameof(userInput));
 
-        public List<string> SearchKeys(string userInput)
-        {
-            var matchingKeys = new List<string>();
+            var matchingKeys = SearchKeys(userInput);
 
-            foreach (var key in _responses.Keys)
+            if (matchingKeys.Count > 0)
             {
-                if (userInput.ToLower().Contains(key.ToLower()))
-                {
-                    matchingKeys.Add(key);
-                }
+                response = _responses[matchingKeys[0].ToLower()];
+                return true;
             }
 
-            return matchingKeys;
+            response = null;
+            return false;
         }
 
-        // Add or update the knowledge base with new responses
-        public void AddOrUpdateResponse(string folderPath, string entity, string group, string key, string response)
+        public async Task AddOrUpdateResponseAsync(string folderPath, string entity, string group, string key, string response, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrWhiteSpace(folderPath) || string.IsNullOrWhiteSpace(entity) || string.IsNullOrWhiteSpace(group) || string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(response))
+                throw new ArgumentException("Parameters cannot be null or whitespace.");
+
             var entityPath = Path.Combine(folderPath, entity);
             var groupFilePath = Path.Combine(entityPath, $"{group}.txt");
 
-            // Ensure the directory exists
-            Directory.CreateDirectory(entityPath);
-
-            // Load existing responses to append or update
-            var responses = new Dictionary<string, List<string>>();
-
-            if (File.Exists(groupFilePath))
+            try
             {
-                using (var reader = new StreamReader(groupFilePath))
-                {
-                    string line;
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        var parts = line.Split(new[] { '=' }, 2);
-                        if (parts.Length == 2)
-                        {
-                            var existingKey = parts[0].Trim().ToLower();
-                            var existingResponse = parts[1].Trim();
+                Directory.CreateDirectory(entityPath);
 
-                            if (!responses.ContainsKey(existingKey))
+                var responses = new Dictionary<string, List<string>>();
+
+                if (File.Exists(groupFilePath))
+                {
+                    using (var reader = new StreamReader(groupFilePath))
+                    {
+                        string line;
+                        while ((line = await reader.ReadLineAsync()) != null)
+                        {
+                            var parts = line.Split(new[] { '=' }, 2);
+                            if (parts.Length == 2)
                             {
-                                responses[existingKey] = new List<string>();
+                                var existingKey = parts[0].Trim().ToLower();
+                                var existingResponse = parts[1].Trim();
+
+                                if (!responses.ContainsKey(existingKey))
+                                {
+                                    responses[existingKey] = new List<string>();
+                                }
+                                responses[existingKey].Add(existingResponse);
                             }
-                            responses[existingKey].Add(existingResponse);
                         }
                     }
                 }
-            }
 
-            // Add the new response without overwriting existing ones
-            if (!responses.ContainsKey(key.ToLower()))
-            {
-                responses[key.ToLower()] = new List<string>();
-            }
-            responses[key.ToLower()].Add(response);
-
-            // Write the updated responses back to the file
-            using (var writer = new StreamWriter(groupFilePath, false))
-            {
-                foreach (var kvp in responses)
+                if (!responses.ContainsKey(key.ToLower()))
                 {
-                    foreach (var resp in kvp.Value)
+                    responses[key.ToLower()] = new List<string>();
+                }
+                responses[key.ToLower()].Add(response);
+
+                using (var writer = new StreamWriter(groupFilePath, false))
+                {
+                    foreach (var kvp in responses)
                     {
-                        writer.WriteLine($"{kvp.Key} = {resp}");
+                        foreach (var resp in kvp.Value)
+                        {
+                            await writer.WriteLineAsync($"{kvp.Key} = {resp}");
+                        }
                     }
                 }
-            }
 
-            // Update the in-memory dictionary with the new response
-            if (!_responses.ContainsKey(key.ToLower()))
-            {
-                _responses[key.ToLower()] = new List<string>();
+                _responses[key.ToLower()] = response;
             }
-            _responses[key.ToLower()].Add(response);
+            catch (IOException ioEx)
+            {
+                throw new Exception($"I/O error while updating knowledge base: {ioEx.Message}", ioEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Unexpected error while updating knowledge base: {ex.Message}", ex);
+            }
         }
     }
 }

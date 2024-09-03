@@ -1,81 +1,57 @@
-﻿namespace bot.Dialogs
-{
-    using bot.Dialogs;
-    using Microsoft.Bot.Builder;
-    using Microsoft.Bot.Builder.Dialogs;
-    using Microsoft.Bot.Schema;
-    using SendGrid;
-    using SendGrid.Helpers.Mail;
-    using System.Threading;
-    using System.Threading.Tasks;
+﻿using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Schema;
+using System.Threading;
+using System.Threading.Tasks;
+using EchoBot1.Servicos;
+using System;
+using Microsoft.Bot.Builder;
 
+namespace EchoBot1.Dialogs
+{
     public class EmailDialog : ComponentDialog
     {
-        private readonly string _sendGridApiKey;
-        private readonly string _fromEmail;
+        private readonly EmailService _emailService;
 
-        public EmailDialog(string sendGridApiKey, string fromEmail) : base(nameof(EmailDialog))
+        public EmailDialog(EmailService emailService) : base(nameof(EmailDialog))
         {
-            _sendGridApiKey = sendGridApiKey;
-            _fromEmail = fromEmail;
+            _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
 
             var waterfallSteps = new WaterfallStep[]
             {
-            AskForRecipientEmailStepAsync,
-            AskForEmailSubjectStepAsync,
-            AskForEmailBodyStepAsync,
-            SendEmailStepAsync
+                AskForEmailDetailsStepAsync,
+                SendEmailStepAsync,
+                FinalStepAsync
             };
 
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
             AddDialog(new TextPrompt(nameof(TextPrompt)));
+
             InitialDialogId = nameof(WaterfallDialog);
         }
 
-        public EmailDialog(string dialogId = null) : base(dialogId)
+        private async Task<DialogTurnResult> AskForEmailDetailsStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-        }
-
-        private async Task<DialogTurnResult> AskForRecipientEmailStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = MessageFactory.Text("Para qual email você deseja enviar?") }, cancellationToken);
-        }
-
-        private async Task<DialogTurnResult> AskForEmailSubjectStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            stepContext.Values["recipientEmail"] = (string)stepContext.Result;
-            return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = MessageFactory.Text("Qual é o assunto do email?") }, cancellationToken);
-        }
-
-        private async Task<DialogTurnResult> AskForEmailBodyStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            stepContext.Values["emailSubject"] = (string)stepContext.Result;
-            return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = MessageFactory.Text("Qual é o conteúdo do email?") }, cancellationToken);
+            var promptMessage = "Para quem você gostaria de enviar o email?";
+            return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = MessageFactory.Text(promptMessage) }, cancellationToken);
         }
 
         private async Task<DialogTurnResult> SendEmailStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            var recipientEmail = (string)stepContext.Values["recipientEmail"];
-            var emailSubject = (string)stepContext.Values["emailSubject"];
-            var emailBody = (string)stepContext.Result;
-
-            var client = new SendGridClient(_sendGridApiKey);
-            var msg = new SendGridMessage()
+            if (stepContext.Result is string emailAddress && !string.IsNullOrWhiteSpace(emailAddress))
             {
-                From = new EmailAddress(_fromEmail, "Seu Nome"),
-                Subject = emailSubject,
-                PlainTextContent = emailBody,
-                HtmlContent = emailBody
-            };
-            msg.AddTo(new EmailAddress(recipientEmail));
+                // Lógica para enviar email aqui
+                await _emailService.SendEmailAsync(emailAddress, "Assunto do Email", "Conteúdo do email.");
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text($"Email enviado para {emailAddress}."), cancellationToken);
+                return await stepContext.NextAsync(null, cancellationToken);
+            }
 
-            var response = await client.SendEmailAsync(msg);
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text("Endereço de email inválido. Tente novamente."), cancellationToken);
+            return await stepContext.ReplaceDialogAsync(InitialDialogId, null, cancellationToken);
+        }
 
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text($"Email enviado para {recipientEmail}."), cancellationToken);
-
-            return await stepContext.ReplaceDialogAsync(nameof(MainMenuDialog), null, cancellationToken);
-
+        private async Task<DialogTurnResult> FinalStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            return await stepContext.EndDialogAsync(null, cancellationToken);
         }
     }
-
 }

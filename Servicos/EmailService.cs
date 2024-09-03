@@ -1,10 +1,11 @@
-﻿namespace EchoBot1.Servicos
-{
-    using Microsoft.Extensions.Configuration;
-    using SendGrid;
-    using SendGrid.Helpers.Mail;
-    using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Configuration;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System;
+using System.Threading.Tasks;
 
+namespace EchoBot1.Servicos
+{
     public class EmailService
     {
         private readonly ISendGridClient _sendGridClient;
@@ -12,8 +13,8 @@
 
         public EmailService(ISendGridClient sendGridClient, IConfiguration configuration)
         {
-            _sendGridClient = sendGridClient;
-            _fromEmail = configuration["SendGrid:FromEmail"];
+            _sendGridClient = sendGridClient ?? throw new ArgumentNullException(nameof(sendGridClient));
+            _fromEmail = configuration["SendGrid:FromEmail"] ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         public async Task SendEmailAsync(string toEmail, string subject, string message)

@@ -1,18 +1,13 @@
 ﻿using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Schema;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Microsoft.Bot.Builder;
 using EchoBot1.Servicos;
 using System.Linq;
-using bot.Dialogs;
+using Microsoft.Bot.Builder;
+
 namespace EchoBot1.Dialogs
 {
-
-
-
-
-
     public class InvoiceDialog : ComponentDialog
     {
         private readonly InvoiceActions _invoiceActions;
@@ -23,9 +18,9 @@ namespace EchoBot1.Dialogs
 
             var waterfallSteps = new WaterfallStep[]
             {
-            AskCustomerNameAsync,
-            ShowInvoicesAsync,
-            ShowOrdersAsync
+                AskCustomerNameAsync,
+                ShowInvoicesAsync,
+                ShowOrdersAsync
             };
 
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
@@ -41,7 +36,6 @@ namespace EchoBot1.Dialogs
         }
 
         private async Task<DialogTurnResult> ShowInvoicesAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-
         {
             var customerName = stepContext.Result.ToString();
             var invoices = _invoiceActions.GetInvoicesByCustomer(customerName);
@@ -92,8 +86,7 @@ namespace EchoBot1.Dialogs
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text("Nenhum pedido encontrado para o cliente fornecido."), cancellationToken);
             }
 
-            return await stepContext.ReplaceDialogAsync(nameof(MainMenuDialog), null, cancellationToken);
-
+            return await stepContext.EndDialogAsync(null, cancellationToken);
         }
     }
 }

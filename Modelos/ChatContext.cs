@@ -4,15 +4,21 @@ using System.Collections.Generic;
 
 namespace EchoBot1.Modelos
 {
-    public class ChatContext
+    public class ChatContext : CommonEntity
     {
         [JsonProperty("model")]
-        public string? Model { get; set; }
+        public string Model { get; set; }
 
         [JsonProperty("messages")]
 
         public List<Message> Messages { get; set; }
 
+
+        public ChatContext() { }
+
+        public ChatContext(string userId, string conversationId) : base(userId, conversationId)
+        {
+        }
     }
 
     public class Message
@@ -22,7 +28,7 @@ namespace EchoBot1.Modelos
 
         [JsonProperty("content")]
         public string Content { get; set; }
-     
+
 
     }
 }
