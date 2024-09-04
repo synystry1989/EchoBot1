@@ -28,13 +28,19 @@ namespace EchoBot1.Dialogs
         public MainDialog(PersonalDataDialog personalDataDialog, LearningModeDialog learningModeDialog, KnowledgeBase knowledgeBase, ILogger<MainDialog> logger, IConfiguration configuration)
             : base(nameof(MainDialog))
         {
+            
             _knowledgeBase = knowledgeBase;
             _logger = logger;
             _openAiEndpoint = configuration["OpenAI:APIEndpoint"];
             _openAiApiKey = configuration["OpenAI:ApiKey"];
             _model = configuration["OpenAI:Model"];
             _maxTokens = int.Parse(configuration["OpenAI:MaxTokens"]);
-            _temperature = double.Parse(configuration["OpenAI:Temperature"]);
+            string temperatureStr = configuration["OpenAI:Temperature"];
+            if (!double.TryParse(temperatureStr, out _temperature))
+            {
+                _logger.LogError("Invalid temperature format in configuration: {0}", temperatureStr);
+                _temperature = 0.0; // or some default value
+            }
 
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             AddDialog(personalDataDialog);
