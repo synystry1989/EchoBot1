@@ -6,6 +6,8 @@ using Microsoft.Bot.Schema;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using System;
 
 namespace EchoBot1.Dialogs
 {
@@ -16,7 +18,7 @@ namespace EchoBot1.Dialogs
         private readonly IStorageHelper _storageHelper;
         private readonly IConfiguration _configuration;
 
-        public PersonalDataDialog(IStorageHelper storageHelper,IConfiguration configuration)
+        public PersonalDataDialog(IStorageHelper storageHelper, IConfiguration configuration)
             : base(nameof(PersonalDataDialog))
         {
             _storageHelper = storageHelper;
@@ -67,7 +69,15 @@ namespace EchoBot1.Dialogs
             var userId = turnContext.Activity.From.Id;
             var personalData = new PersonalDataEntity(userId, name, email);
 
-            await _storageHelper.InsertEntityAsync(_configuration["StorageAcc:UserProfileTable"], personalData);
+
+            await _storageHelper.InsertEntityAsync(_configuration["StorageAcc:UserProfileTable"], new PersonalDataEntity()
+            {
+                PartitionKey = userId,
+                RowKey = Guid.NewGuid().ToString(),
+                Email = email,
+                Name = name
+            });
         }
     }
 }
+

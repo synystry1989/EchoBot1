@@ -82,38 +82,32 @@ namespace EchoBot1.Servicos
 
        
 
-        public async Task<List<string>> GetConversationIdsByUserIdAsync(string userId)
+      
+
+        public async Task SaveChatContextToStorageAsync(string tableName, string userId, string conversationId, ChatContext chatContext)
         {
-            try
+            var chatContextEntity = new GptResponseEntity()
             {
-                var tableClient = await GetTableClient("UserContext");
-                var query = tableClient.QueryAsync<GptResponseEntity>(filter: $"PartitionKey eq '{userId}'");
+                PartitionKey = userId,
+                RowKey = conversationId,
+                ConversationId = conversationId,
+                UserId = userId,
+                UserContext = JsonConvert.SerializeObject(chatContext.Messages)
+            };
 
-                var conversationIds = new List<string>();
-                await foreach (var entity in query)
-                {
-                    conversationIds.Add(entity.RowKey); // Use RowKey to get conversationId
-                }
-
-                return conversationIds;
-            }
-            catch (Exception ex)
-            {
-                await Console.Out.WriteLineAsync($"Error retrieving conversation IDs: {ex.Message}");
-                return new List<string>();
-            }
+            await InsertEntityAsync(tableName, chatContextEntity);
         }
 
-        public async Task InsertChatContextAsync(string userId, string conversationId, string chatContext)
-        {
-            var entity = new GptResponseEntity(userId, conversationId,chatContext);
-            await InsertEntityAsync("UserContext", entity);
-        }
+       //public async Task InsertChatContextAsync(string userId, string conversationId, string chatContext)
+       //  {
+       //     var entity = new GptResponseEntity(userId, conversationId,chatContext);
+       //     await InsertEntityAsync("UserContext", entity);
+       // }
         public async Task<bool> UserExistsAsync(string userId)
         {
             try
             {
-                var tableClient = await GetTableClient("UserContext");
+                var tableClient = await GetTableClient("UserProfiles");
                 var query = tableClient.QueryAsync<TableEntity>(filter: $"PartitionKey eq '{userId}'");
 
                 await foreach (var entity in query)

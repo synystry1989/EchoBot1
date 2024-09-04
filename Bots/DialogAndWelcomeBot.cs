@@ -7,37 +7,69 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using EchoBot1.Servicos;
-using System.Linq;
-using System.IO;
+using EchoBot1.Modelos;
+using Newtonsoft.Json;
+using Azure.Data.Tables;
+using EchoBot1.Dialogs;
 
 namespace EchoBot1.Bots
 {
     public class DialogAndWelcomeBot<T> : ActivityHandler where T : Dialog
     {
-        private readonly BotState _conversationState;
-        private readonly BotState _userState;
+        private readonly ConversationState _conversationState;
         private readonly Dialog _dialog;
         private readonly IStorageHelper _storageHelper;
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
+        private readonly IStatePropertyAccessor<DialogState> _dialogStateAccessor;
+        private readonly IStatePropertyAccessor<ChatContext> _chatContextAccessor;
 
-        public DialogAndWelcomeBot(ConversationState conversationState, UserState userState, T dialog, IStorageHelper storageHelper, ILogger<DialogAndWelcomeBot<T>> logger, IConfiguration configuration)
+        public DialogAndWelcomeBot(
+            ConversationState conversationState,
+            T dialog,
+            IStorageHelper storageHelper,
+            ILogger<DialogAndWelcomeBot<T>> logger,
+            IConfiguration configuration)
         {
             _conversationState = conversationState;
-            _userState = userState;
             _dialog = dialog;
             _storageHelper = storageHelper;
             _logger = logger;
             _configuration = configuration;
+
+            _dialogStateAccessor = _conversationState.CreateProperty<DialogState>("DialogState");
+            _chatContextAccessor = _conversationState.CreateProperty<ChatContext>("ChatContext");
         }
 
         public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default)
         {
-            await base.OnTurnAsync(turnContext, cancellationToken);
+            // Load state properties
+            var dialogState = await _dialogStateAccessor.GetAsync(turnContext, () => new DialogState(), cancellationToken);
+            var chatContext = await _chatContextAccessor.GetAsync(turnContext, () => new ChatContext(), cancellationToken);
+            var userId = turnContext.Activity.From.Id;
+            var conversationId = turnContext.Activity.Conversation.Id;
+
+            if (turnContext.Activity.Type == ActivityTypes.Message)
+            {
+                // Save user's message to ChatContext
+                AddMessageToChatContext(chatContext, "user", turnContext.Activity.Text);
+
+                // Execute the main dialog
+                await _dialog.RunAsync(turnContext, _dialogStateAccessor, cancellationToken);
+
+                // Save bot's response to ChatContext
+                var botResponse = turnContext.Activity.AsMessageActivity()?.Text;
+                if (!string.IsNullOrEmpty(botResponse))
+                {
+                    AddMessageToChatContext(chatContext, "assistant", botResponse);
+                }
+
+                // Save chat context to persistent storage
+                await _storageHelper.SaveChatContextToStorageAsync(_configuration["StorageAcc:GPTContextTable"], userId, conversationId, chatContext);
+            }
 
             // Save any state changes that might have occurred during the turn.
             await _conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
-            await _userState.SaveChangesAsync(turnContext, false, cancellationToken);
         }
 
         protected override async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
@@ -46,49 +78,98 @@ namespace EchoBot1.Bots
             {
                 if (member.Id != turnContext.Activity.Recipient.Id)
                 {
-                    // Check if the user exists in the UserProfiles table
-                    bool userExists = await _storageHelper.UserExistsAsync(member.Id);
+                    var userId = member.Id;
+                    var chatContext = await InitializeChatContextAsync(userId);
+                    bool userExists = await _storageHelper.UserExistsAsync(userId);
 
                     if (userExists)
                     {
-                        // User already exists, send a "welcome back" message
+                        // Welcome back message for existing user
                         var welcomeBackMessage = $"Bem-vindo de volta, {member.Name}! Em que posso ajudar hoje?";
+                        AddMessageToChatContext(chatContext, "assistant", welcomeBackMessage);
                         await turnContext.SendActivityAsync(MessageFactory.Text(welcomeBackMessage), cancellationToken);
                     }
                     else
                     {
-                        // User is new, start the personal data dialog to collect user information
-                        await _dialog.RunAsync(turnContext, _conversationState.CreateProperty<DialogState>("DialogState"), cancellationToken);
+                        // New user: show hero card and start WelcomeDialog
+                        await ShowHeroCardAsync(turnContext, cancellationToken);
+
+                        var personalDataMessage = "Vamos começar a coletar alguns dados pessoais.";
+                        AddMessageToChatContext(chatContext, "assistant", personalDataMessage);
+                        await turnContext.SendActivityAsync(MessageFactory.Text(personalDataMessage), cancellationToken);
+
+                        // Start the WelcomeDialog for new users
+                        var dialogSet = new DialogSet(_dialogStateAccessor);
+                        dialogSet.Add(_dialog);
+                        var dialogContext = await dialogSet.CreateContextAsync(turnContext, cancellationToken);
+                        await dialogContext.BeginDialogAsync(nameof(PersonalDataDialog), null, cancellationToken);
+                    }
+
+                    // Save the updated chat context after welcome message or card
+                    await _storageHelper.SaveChatContextToStorageAsync(_configuration["StorageAcc:GPTContextTable"], userId, turnContext.Activity.Conversation.Id, chatContext);
+                }
+            }
+        }
+
+        private async Task ShowHeroCardAsync(ITurnContext turnContext, CancellationToken cancellationToken)
+        {
+            var heroCard = new HeroCard
+            {
+                Title = "Bem-vindo ao seu assistente VMPontoAI",
+                Subtitle = "Ajuda Personalizada:",
+                Text = "Envio Emails | Realizar encomendas | Ver faturas | Falar c/ Suporte",
+                Images = new List<CardImage> { new CardImage("C:\\Users\\synys\\Pictures\\Screenshots\\VMP.png") },
+                Buttons = new List<CardAction> { new CardAction(ActionTypes.OpenUrl, "Os nossos Produtos", value: "https://docs.microsoft.com/bot-framework") },
+            };
+
+            var reply = MessageFactory.Attachment(heroCard.ToAttachment());
+            await turnContext.SendActivityAsync(reply, cancellationToken);
+        }
+
+        private async Task<ChatContext> InitializeChatContextAsync(string userId)
+        {
+            bool userExists = await _storageHelper.UserExistsAsync(userId);
+            ChatContext chatContext = new ChatContext
+            {
+                Messages = new List<Message>()
+            };
+
+            if (userExists)
+            {
+                var conversationIds = await GetPaginatedConversationIdsByUserIdAsync(userId);
+
+                foreach (var conversationId in conversationIds)
+                {
+                    var chatContextEntity = await _storageHelper.GetEntityAsync<GptResponseEntity>(_configuration["StorageAcc:GPTContextTable"], userId, conversationId);
+                    if (chatContextEntity != null)
+                    {
+                        var previousMessages = JsonConvert.DeserializeObject<List<Message>>(chatContextEntity.UserContext);
+                        chatContext.Messages.AddRange(previousMessages);
                     }
                 }
             }
+
+            return chatContext;
         }
 
-        protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        private void AddMessageToChatContext(ChatContext chatContext, string role, string content)
         {
-            _logger.LogInformation("Running dialog with Message Activity.");
-
-            // Run the MainDialog with the new message Activity
-            await _dialog.RunAsync(turnContext, _conversationState.CreateProperty<DialogState>("DialogState"), cancellationToken);
+            chatContext.Messages.Add(new Message { Role = role, Content = content });
         }
 
-        private Attachment CreateAdaptiveCardAttachment()
+        private async Task<List<string>> GetPaginatedConversationIdsByUserIdAsync(string userId)
         {
-            // Implement your adaptive card loading logic here
-            var cardResourcePath = GetType().Assembly.GetManifestResourceNames().First(name => name.EndsWith("welcomeCard.json"));
+            var conversationIds = new List<string>();
+            var tableClient = await _storageHelper.GetTableClient("UserContext");
 
-            using (var stream = GetType().Assembly.GetManifestResourceStream(cardResourcePath))
+            var query = tableClient.QueryAsync<GptResponseEntity>(filter: $"PartitionKey eq '{userId}'");
+
+            await foreach (var entity in query)
             {
-                using (var reader = new StreamReader(stream))
-                {
-                    var adaptiveCard = reader.ReadToEnd();
-                    return new Attachment()
-                    {
-                        ContentType = "application/vnd.microsoft.card.adaptive",
-                        Content = Newtonsoft.Json.JsonConvert.DeserializeObject(adaptiveCard, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = null }),
-                    };
-                }
+                conversationIds.Add(entity.RowKey);
             }
+
+            return conversationIds;
         }
     }
 }

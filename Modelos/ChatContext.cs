@@ -18,6 +18,10 @@ namespace EchoBot1.Modelos
             Messages = new List<Message>();
         }
     }
+    public class ConversationData
+    {
+        public List<Message> Messages { get; set; } = new List<Message>();
+    }
 
     public class Message
     {
