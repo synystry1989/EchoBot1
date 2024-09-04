@@ -112,8 +112,7 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABcAAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-31T22:25:28.444Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-31T22:25:28.444Z"
             },
             {
               "$type": "Document",
@@ -138,8 +137,7 @@
               "RelativeToolTip": "Modelos\\GptResponseEntity.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABgAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-09T15:16:11.431Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-09T15:16:11.431Z"
             },
             {
               "$type": "Document",
@@ -151,8 +149,7 @@
               "RelativeToolTip": "Modelos\\CommonEntity.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-31T22:22:21.419Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-31T22:22:21.419Z"
             },
             {
               "$type": "Document",
@@ -164,8 +161,7 @@
               "RelativeToolTip": "Modelos\\ChatContext.cs",
               "ViewState": "AQIAAAAAAAAAJXmpCgAMwAkAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-02T22:00:55.195Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-02T22:00:55.195Z"
             },
             {
               "$type": "Document",
@@ -177,8 +173,7 @@
               "RelativeToolTip": "Startup.cs",
               "ViewState": "AQIAABUAAAAAAAAAAAAIwCgAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-07T02:22:40.867Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-07T02:22:40.867Z"
             },
             {
               "$type": "Document",
@@ -190,8 +185,7 @@
               "RelativeToolTip": "Servicos\\IStorageHelper.cs",
               "ViewState": "AQIAADwAAAAAAAAAAIA5wDwAAAAqAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-23T20:50:39.035Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-23T20:50:39.035Z"
             },
             {
               "$type": "Document",
@@ -203,8 +197,7 @@
               "RelativeToolTip": "AdapterWithErrorHandler.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-08T22:56:58.243Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-08T22:56:58.243Z"
             },
             {
               "$type": "Document",
@@ -216,8 +209,7 @@
               "RelativeToolTip": "Servicos\\StorageHelper.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-23T18:09:33.906Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-23T18:09:33.906Z"
             },
             {
               "$type": "Document",
@@ -311,7 +303,7 @@
               "RelativeDocumentMoniker": "..\\..\\..\\.nuget\\packages\\dotnetcore.npoi\\1.2.3\\contentFiles\\any\\netstandard2.0\\NOTICE.TXT",
               "ToolTip": "C:\\Users\\synys\\.nuget\\packages\\dotnetcore.npoi\\1.2.3\\contentFiles\\any\\netstandard2.0\\NOTICE.TXT [Somente Leitura]",
               "RelativeToolTip": "..\\..\\..\\.nuget\\packages\\dotnetcore.npoi\\1.2.3\\contentFiles\\any\\netstandard2.0\\NOTICE.TXT [Somente Leitura]",
-              "ViewState": "AQIAAIwAAAAAAAAAAGB3wAAAAAAAAAAA",
+              "ViewState": "AQIAAIoAAAAAAAAAAIB5wAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
               "WhenOpened": "2024-08-16T15:50:04.326Z",
               "EditorCaption": " [Somente Leitura]"
