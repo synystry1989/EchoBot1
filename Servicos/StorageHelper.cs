@@ -17,21 +17,25 @@ namespace EchoBot1.Servicos
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
+ 
 
-        public async Task<TableClient> GetTableClient(string tableName)
+        public async Task CreateTablesIfNotExistsAsync()
         {
-            TableServiceClient tableServiceClient = new TableServiceClient(_configuration.GetConnectionString("StorageAcc"));
-            TableClient tableClient = tableServiceClient.GetTableClient(tableName: tableName);
-            await tableClient.CreateIfNotExistsAsync();
-            return tableClient;
+            // Create UserContext table
+            var userContextTableName = _configuration["StorageAcc:GPTContextTable"];
+            await GetTableClient(userContextTableName);
+
+            // Create UserProfiles table
+            var userProfileTableName = _configuration["StorageAcc:UserProfileTable"];
+            await GetTableClient(userProfileTableName);
         }
 
         public async Task InsertEntityAsync<T>(string tableName, T entity) where T : ITableEntity
         {
             try
             {
-                TableClient table = await GetTableClient(tableName);
-                await table.UpsertEntityAsync(entity);
+                var tableClient = await GetTableClient(tableName);
+                await tableClient.UpsertEntityAsync(entity);
             }
             catch (Exception ex)
             {
@@ -43,8 +47,8 @@ namespace EchoBot1.Servicos
         {
             try
             {
-                TableClient table = await GetTableClient(tableName);
-                return await table.GetEntityAsync<T>(partitionKey, rowKey);
+                var tableClient = await GetTableClient(tableName);
+                return await tableClient.GetEntityAsync<T>(partitionKey, rowKey);
             }
             catch (RequestFailedException ex) when (ex.Status == 404)
             {
@@ -52,8 +56,7 @@ namespace EchoBot1.Servicos
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"Error getting entity from table storage: {ex.Message}");
-                return null;
+                throw new Exception($"Error getting entity from table storage: {ex.Message}");
             }
         }
 
@@ -61,14 +64,23 @@ namespace EchoBot1.Servicos
         {
             try
             {
-                TableClient table = await GetTableClient(tableName);
-                await table.DeleteEntityAsync(partitionKey, rowKey);
+                var tableClient = await GetTableClient(tableName);
+                await tableClient.DeleteEntityAsync(partitionKey, rowKey);
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error deleting entity from table storage: {ex.Message}");
             }
         }
+        public async Task<TableClient> GetTableClient(string tableName)
+        {
+            TableServiceClient tableServiceClient = new TableServiceClient(_configuration.GetConnectionString("StorageAcc"));
+            TableClient tableClient = tableServiceClient.GetTableClient(tableName: tableName);
+            await tableClient.CreateIfNotExistsAsync();
+            return tableClient;
+        }
+
+       
 
         public async Task<List<string>> GetConversationIdsByUserIdAsync(string userId)
         {

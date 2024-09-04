@@ -70,9 +70,17 @@
               "target": "Package",
               "version": "[3.1.1, )"
             },
+            "Microsoft.Bot.Builder": {
+              "target": "Package",
+              "version": "[4.22.7, )"
+            },
+            "Microsoft.Bot.Builder.Dialogs": {
+              "target": "Package",
+              "version": "[4.22.7, )"
+            },
             "Microsoft.Bot.Builder.Integration.AspNet.Core": {
               "target": "Package",
-              "version": "[4.22.0, )"
+              "version": "[4.22.7, )"
             },
             "Microsoft.Identity.Client": {
               "target": "Package",
@@ -85,6 +93,10 @@
             "MimeKit": {
               "target": "Package",
               "version": "[4.7.1, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
             },
             "OpenAI": {
               "target": "Package",

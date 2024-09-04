@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace EchoBot1.Modelos
@@ -35,7 +36,7 @@ namespace EchoBot1.Modelos
                             {
                                 _responses[key] = new List<string>();
                             }
-                            _responses[key].Add(response);  // Add response to the list
+                            _responses[key].Add(response);
                         }
                     }
                 }
@@ -48,7 +49,6 @@ namespace EchoBot1.Modelos
             var key = userInput.ToLower();
             if (_responses.ContainsKey(key))
             {
-                // Join all responses for the key into a single string
                 return string.Join("\n", _responses[key]);
             }
             return null;

@@ -59,5 +59,7 @@ namespace EchoBot1.Servicos
         Task InsertChatContextAsync(string userId, string conversationId, string chatContext);
 
         Task<bool> UserExistsAsync(string userId);
+
+        Task CreateTablesIfNotExistsAsync();
     }
 }

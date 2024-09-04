@@ -1,5 +1,7 @@
-﻿// Generated with Bot Builder V4 SDK Template for Visual Studio EchoBot v4.22.0
-
+﻿using EchoBot1;
+using EchoBot1.Bots;
+using EchoBot1.Dialogos;
+using EchoBot1.Dialogs;
 using EchoBot1.Modelos;
 using EchoBot1.Servicos;
 using Microsoft.AspNetCore.Builder;
@@ -11,56 +13,76 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace EchoBot1
+public class Startup
 {
-    public class Startup
-    { 
-        public Startup(IConfiguration configuration)
+    public IConfiguration Configuration { get; }
+
+    public Startup(IConfiguration configuration)
+    {
+        Configuration = configuration;
+    }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        // Configure settings from appsettings.json
+        services.AddSingleton(Configuration);
+
+        // Add bot adapter with error handling enabled
+        services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
+
+        // Configure state
+        services.AddSingleton<ConversationState>();
+        services.AddSingleton<UserState>();
+
+        // Register KnowledgeBase
+        services.AddSingleton<KnowledgeBase>(provider =>
         {
-            Configuration = configuration;
+            var knowledgeBase = new KnowledgeBase();
+            var config = provider.GetRequiredService<IConfiguration>();
+            var knowledgeBasePath = config["KnowledgeBasePath:path"];
+            knowledgeBase.LoadResponses(knowledgeBasePath);
+            return knowledgeBase;
+        });
+
+        // Register StorageHelper
+        services.AddSingleton<IStorageHelper, StorageHelper>();
+
+        // Register dialogs
+        services.AddSingleton<PersonalDataDialog>();
+        services.AddSingleton<LearningModeDialog>();
+        services.AddSingleton<HelpDialog>();
+        services.AddSingleton<MainDialog>();
+
+        // Register the bot
+        services.AddTransient<IBot, DialogAndWelcomeBot<MainDialog>>();
+
+        // Initialize the storage tables at startup
+        var serviceProvider = services.BuildServiceProvider();
+        var storageHelper = serviceProvider.GetRequiredService<IStorageHelper>();
+        storageHelper.CreateTablesIfNotExistsAsync().Wait();
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseExceptionHandler("/Home/Error");
         }
 
-        public IConfiguration Configuration { get; }
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        app.UseWebSockets();
+        app.UseRouting();
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
         {
-            services.AddHttpClient().AddControllers().AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.MaxDepth = HttpHelper.BotMessageSerializerSettings.MaxDepth;
-            });
-
-            // Create the Bot Framework Authentication to be used with the Bot Adapter.
-            services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
-
-            // Create the Bot Adapter with error handling enabled.
-            services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
-            services.AddTransient<KnowledgeBase>();
-            services.AddSingleton<IStorageHelper,StorageHelper>();
-
-            // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, EchoBot1>();
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseDefaultFiles()
-                .UseStaticFiles()
-                .UseWebSockets()
-                .UseRouting()
-                .UseAuthorization()
-                .UseEndpoints(endpoints =>
-                {
-                    endpoints.MapControllers();
-                });
-
-            // app.UseHttpsRedirection();
-        }
+            endpoints.MapControllers();
+        });
     }
 }
