@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using EchoBot1.Servicos;
+using System.Linq;
+using System.IO;
 
 namespace EchoBot1.Bots
 {
@@ -19,7 +21,7 @@ namespace EchoBot1.Bots
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
 
-        public DialogAndWelcomeBot(ConversationState conversationState, UserState userState, T dialog, IStorageHelper storageHelper, ILogger<DialogBot<T>> logger, IConfiguration configuration)
+        public DialogAndWelcomeBot(ConversationState conversationState, UserState userState, T dialog, IStorageHelper storageHelper, ILogger<DialogAndWelcomeBot<T>> logger, IConfiguration configuration)
         {
             _conversationState = conversationState;
             _userState = userState;
@@ -45,7 +47,7 @@ namespace EchoBot1.Bots
                 if (member.Id != turnContext.Activity.Recipient.Id)
                 {
                     // Check if the user exists in the UserProfiles table
-                    bool userExists = await _storageHelper.UserExistsAsync(member.Id, _configuration["StorageAcc:UserProfileTable"]);
+                    bool userExists = await _storageHelper.UserExistsAsync(member.Id);
 
                     if (userExists)
                     {

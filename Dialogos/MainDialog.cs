@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text;
 using EchoBot1.Modelos;
+using EchoBot1.Dialogos;
+using System;
 
 namespace EchoBot1.Dialogs
 {
@@ -23,7 +25,7 @@ namespace EchoBot1.Dialogs
         private readonly int _maxTokens;
         private readonly double _temperature;
 
-        public MainDialog(PersonalDataDialog personalDataDialog, LearningModeDialog learningModeDialog, HelpDialog helpDialog, KnowledgeBase knowledgeBase, ILogger<MainDialog> logger, IConfiguration configuration)
+        public MainDialog(PersonalDataDialog personalDataDialog, LearningModeDialog learningModeDialog, KnowledgeBase knowledgeBase, ILogger<MainDialog> logger, IConfiguration configuration)
             : base(nameof(MainDialog))
         {
             _knowledgeBase = knowledgeBase;
@@ -37,7 +39,7 @@ namespace EchoBot1.Dialogs
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             AddDialog(personalDataDialog);
             AddDialog(learningModeDialog);
-            AddDialog(helpDialog);
+    
 
             var waterfallSteps = new WaterfallStep[]
             {
@@ -65,10 +67,8 @@ namespace EchoBot1.Dialogs
             if (userMessage.ToLower().Contains("learn"))
             {
                 return await stepContext.BeginDialogAsync(nameof(LearningModeDialog), null, cancellationToken);
-            }
-            else if (userMessage.ToLower().Contains("help"))
-            {
-                return await stepContext.BeginDialogAsync(nameof(HelpDialog), null, cancellationToken);
+            
+           
             }
             else
             {

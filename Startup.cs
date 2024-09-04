@@ -27,10 +27,18 @@ public class Startup
         // Configure settings from appsettings.json
         services.AddSingleton(Configuration);
 
+        // Use ConfigurationBotFrameworkAuthentication as the implementation for BotFrameworkAuthentication
+        services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>(sp =>
+        {
+            var config = sp.GetRequiredService<IConfiguration>();
+            return new ConfigurationBotFrameworkAuthentication(config);
+        });
+
         // Add bot adapter with error handling enabled
         services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
-        // Configure state
+        // Add state management
+        services.AddSingleton<IStorage, MemoryStorage>();
         services.AddSingleton<ConversationState>();
         services.AddSingleton<UserState>();
 
@@ -47,6 +55,9 @@ public class Startup
         // Register StorageHelper
         services.AddSingleton<IStorageHelper, StorageHelper>();
 
+        // Add controllers and JSON support
+        services.AddControllers().AddNewtonsoftJson();
+
         // Register dialogs
         services.AddSingleton<PersonalDataDialog>();
         services.AddSingleton<LearningModeDialog>();
@@ -57,9 +68,7 @@ public class Startup
         services.AddTransient<IBot, DialogAndWelcomeBot<MainDialog>>();
 
         // Initialize the storage tables at startup
-        var serviceProvider = services.BuildServiceProvider();
-        var storageHelper = serviceProvider.GetRequiredService<IStorageHelper>();
-        storageHelper.CreateTablesIfNotExistsAsync().Wait();
+        services.BuildServiceProvider().GetRequiredService<IStorageHelper>().CreateTablesIfNotExistsAsync().Wait();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

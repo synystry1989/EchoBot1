@@ -11,8 +11,8 @@ namespace EchoBot1.Dialogs
 {
     public class PersonalDataDialog : ComponentDialog
     {
-        private const string NameStepMsgText = "What is your name?";
-        private const string EmailStepMsgText = "What is your email address?";
+        private const string NameStepMsgText = "Como te chamas?";
+        private const string EmailStepMsgText = "qual é o teu email?";
         private readonly IStorageHelper _storageHelper;
         private readonly IConfiguration _configuration;
 
@@ -41,7 +41,7 @@ namespace EchoBot1.Dialogs
 
         private async Task<DialogTurnResult> EmailStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["name"] = (string)stepContext.Result;
+            stepContext.Values["nome"] = (string)stepContext.Result;
 
             var promptMessage = MessageFactory.Text(EmailStepMsgText, EmailStepMsgText, InputHints.ExpectingInput);
             return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = promptMessage }, cancellationToken);
@@ -49,9 +49,9 @@ namespace EchoBot1.Dialogs
 
         private async Task<DialogTurnResult> SaveDataStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["email"] = (string)stepContext.Result;
+            stepContext.Values["nome"] = (string)stepContext.Result;
 
-            var userName = (string)stepContext.Values["name"];
+            var userName = (string)stepContext.Values["nome"];
             var userEmail = (string)stepContext.Values["email"];
 
             // Save user data using IStorageHelper

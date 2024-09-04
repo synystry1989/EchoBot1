@@ -4,6 +4,8 @@ using Microsoft.Bot.Schema;
 using System.Threading;
 using System.Threading.Tasks;
 using EchoBot1.Modelos;
+using Microsoft.Extensions.Configuration;
+using System;
 
 namespace EchoBot1.Dialogs
 {
