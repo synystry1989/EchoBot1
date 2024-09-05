@@ -8,19 +8,22 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
+using OpenAI.ChatGpt.Models.ChatCompletion.Messaging;
 
 namespace EchoBot1.Dialogs
 {
     public class PersonalDataDialog : ComponentDialog
     {
+        private readonly ChatContext _chatContext;
         private const string NameStepMsgText = "Como te chamas?";
         private const string EmailStepMsgText = "qual é o teu email?";
         private readonly IStorageHelper _storageHelper;
         private readonly IConfiguration _configuration;
 
-        public PersonalDataDialog(IStorageHelper storageHelper, IConfiguration configuration)
+        public PersonalDataDialog(IStorageHelper storageHelper, IConfiguration configuration, ChatContext chatContext)
             : base(nameof(PersonalDataDialog))
         {
+            _chatContext = chatContext;
             _storageHelper = storageHelper;
             _configuration = configuration;
 
@@ -38,6 +41,8 @@ namespace EchoBot1.Dialogs
         private async Task<DialogTurnResult> NameStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var promptMessage = MessageFactory.Text(NameStepMsgText, NameStepMsgText, InputHints.ExpectingInput);
+            _chatContext.Messages.Add(new Message() { Role = "Assistante", Content = NameStepMsgText });
+            _chatContext.Messages.Add(new Message() { Role = "user", Content = InputHints.ExpectingInput });
             return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = promptMessage }, cancellationToken);
         }
 
