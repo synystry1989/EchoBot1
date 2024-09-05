@@ -28,39 +28,35 @@ public class Startup
         // Configure settings from appsettings.json
         services.AddSingleton(Configuration);
 
-        // Use ConfigurationBotFrameworkAuthentication as the implementation for BotFrameworkAuthentication
-        services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>(sp =>
-        {        
-            return new ConfigurationBotFrameworkAuthentication(Configuration);
+        services.AddHttpClient().AddControllers().AddNewtonsoftJson(options =>
+        {
+            options.SerializerSettings.MaxDepth = HttpHelper.BotMessageSerializerSettings.MaxDepth;
         });
+
+        // Create the Bot Framework Authentication to be used with the Bot Adapter.
+        services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
 
         // Add bot adapter with error handling enabled
         services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
+
+
+        services.AddSingleton<ChatContext>();
+
+
+        // Create the Bot Adapter with error handling enabled.
+
+        services.AddTransient<KnowledgeBase>();
+     
         // Register StorageHelper
         services.AddSingleton<IStorageHelper, StorageHelper>();
 
         // Add state management
         services.AddSingleton<IStorage, MemoryStorage>();
+
         services.AddSingleton<UserState>();
 
         services.AddSingleton<ConversationState>();
 
-
-        // Register KnowledgeBase
-        services.AddSingleton<KnowledgeBase>(provider =>
-        {
-            var knowledgeBase = new KnowledgeBase();    
-            var knowledgeBasePath = Configuration["KnowledgeBasePath:path"];
-            knowledgeBase.LoadResponses(knowledgeBasePath);
-            return knowledgeBase;
-        });
-
-
-        // Add controllers and JSON support
-        services.AddHttpClient().AddControllers().AddNewtonsoftJson(options =>
-        {
-            options.SerializerSettings.MaxDepth = HttpHelper.BotMessageSerializerSettings.MaxDepth;
-        });
 
         // Register dialogs
         services.AddSingleton<PersonalDataDialog>();
@@ -68,7 +64,7 @@ public class Startup
         services.AddSingleton<MainDialog>();
         
         // Register the bot
-        services.AddTransient<IBot, DialogAndWelcomeBot<MainDialog>>();
+      
 
         // Initialize the storage tables at startup
 
@@ -76,6 +72,9 @@ public class Startup
         var serviceProvider = services.BuildServiceProvider();
         var storageHelper = serviceProvider.GetRequiredService<IStorageHelper>();
         Task.Run(async () => await storageHelper.CreateTablesIfNotExistsAsync()).Wait();
+
+
+        services.AddTransient<IBot, DialogAndWelcomeBot<MainDialog>>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

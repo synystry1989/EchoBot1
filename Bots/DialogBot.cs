@@ -8,6 +8,7 @@ using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -41,6 +42,7 @@ namespace EchoBot1.Bots
 
         public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
         {
+            await base.OnTurnAsync(turnContext, cancellationToken);
 
             await ConversationState.SaveChangesAsync(turnContext, false, cancellationToken);
             await UserState.SaveChangesAsync(turnContext, false, cancellationToken);
@@ -48,13 +50,47 @@ namespace EchoBot1.Bots
 
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
-   
+         
             var userId = turnContext.Activity.From.Id;
             var conversationId = turnContext.Activity.Conversation.Id;
-            ChatContext chatContext = new ChatContext();
+            ChatContext chatContext = null;
 
-          await _storageHelper.InitializeChatContextAsync( userId);
-           // Step 5: Save updated chat context back to storage
+            // Step 1: Check if the user exists in the storage and aggregate messages from all conversations
+            bool userExists = await _storageHelper.UserExistsAsync(userId);
+
+            if (userExists)
+            {
+                // Initialize a new chat context to aggregate all messages
+                chatContext = new ChatContext()
+                {
+                    Model = _configuration["OpenAI:Model"],
+                    Messages = new List<Message>()
+                };
+
+                // Load all previous conversations
+                var existingConversationIds = await _storageHelper.GetPaginatedConversationIdsByUserIdAsync(userId);
+                foreach (var existingConversationId in existingConversationIds)
+                {
+                    var chatContextEntity = await _storageHelper.GetEntityAsync<GptResponseEntity>(_configuration["StorageAcc:GPTContextTable"], userId, existingConversationId);
+                    if (chatContextEntity != null)
+                    {
+                        // Append each message from the previous context to the current chat context
+                        var previousMessages = JsonConvert.DeserializeObject<List<Message>>(chatContextEntity.UserContext);
+                        chatContext.Messages.AddRange(previousMessages);
+                    }
+                }
+            }
+
+            // Step 2: Initialize a new chat context if no previous context exists
+            if (chatContext == null)
+            {
+                chatContext = new ChatContext()
+                {
+                    Model = _configuration["OpenAI:Model"],
+                    Messages = new List<Message>()
+                };
+            }
+
             await _storageHelper.InsertEntityAsync(_configuration["StorageAcc:GPTContextTable"], new GptResponseEntity()
             {
                 PartitionKey = userId,
@@ -63,7 +99,6 @@ namespace EchoBot1.Bots
                 UserId = userId,
                 UserContext = JsonConvert.SerializeObject(chatContext.Messages)
             });
-
 
             Logger.LogInformation("Running dialog with Message Activity.");
 
