@@ -1,4 +1,4 @@
-﻿using OpenAI_API.Chat;
+﻿
 
 namespace EchoBot1.Modelos
 {

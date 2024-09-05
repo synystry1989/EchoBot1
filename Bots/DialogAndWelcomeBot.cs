@@ -19,7 +19,7 @@ namespace EchoBot1.Bots
     {
         private readonly IStorageHelper _storageHelper;
         public DialogAndWelcomeBot(IStorageHelper storageHelper, ConversationState conversationState, UserState userState, T dialog, ILogger<DialogBot<T>> logger)
-            : base(conversationState, userState, dialog, logger)
+            : base(conversationState, userState, dialog, logger, storageHelper)
         {
             _storageHelper = storageHelper;
         }
@@ -49,7 +49,7 @@ namespace EchoBot1.Bots
                             Buttons = new List<CardAction> { new CardAction(ActionTypes.OpenUrl, "Os nossos Produtos", value: "https://docs.microsoft.com/bot-framework") },
                         };
                      
-                        var reply = MessageFactory.Attachment(heroCard.ToAttachment());
+                        var reply = MessageFactory.Attachment(heroCard.ToAttachment(), "Iremos recolher os seus dados de Seguida.");
                    
                         await turnContext.SendActivityAsync(reply, cancellationToken);
 
@@ -58,4 +58,4 @@ namespace EchoBot1.Bots
             }
         }
     
-}
+

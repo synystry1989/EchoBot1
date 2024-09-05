@@ -16,10 +16,10 @@ namespace EchoBot1.Dialogos
     {
         private readonly IStorageHelper storageHelper;
         private readonly ModoAprendizagemDialog _modoAprendizagemDialog;
-        private readonly UserProfileStoreDialog _userProfileStoreDialog;
+        private readonly UserProfileDialog _userProfileStoreDialog;
         private readonly ILogger<MainDialog> _logger;
         private readonly KnowledgeBase _knowledgeBase;
-        public MainDialog(KnowledgeBase knowledgeBase, UserProfileStoreDialog userProfileStore, ModoAprendizagemDialog modoAprendizagem, ILogger<MainDialog> logger)
+        public MainDialog(KnowledgeBase knowledgeBase, UserProfileDialog userProfileStore, ModoAprendizagemDialog modoAprendizagem, ILogger<MainDialog> logger)
            : base(nameof(MainDialog))
         {
             _knowledgeBase = knowledgeBase;
@@ -53,7 +53,7 @@ namespace EchoBot1.Dialogos
             bool userProfile = await storageHelper.UserExistsAsync(userId);
             if (userProfile == null)
             {
-                return await stepContext.BeginDialogAsync(nameof(UserProfileStoreDialog), null, cancellationToken);
+                return await stepContext.BeginDialogAsync(nameof(UserProfileDialog), null, cancellationToken);
             }
             else
             {

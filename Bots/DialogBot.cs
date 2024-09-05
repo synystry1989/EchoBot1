@@ -29,8 +29,9 @@ namespace EchoBot1.Bots
         protected readonly ILogger Logger;
         protected readonly IStorageHelper _storageHelper;
 
-        public DialogBot(ConversationState conversationState, UserState userState, T dialog, ILogger<DialogBot<T>> logger)
+        public DialogBot(ConversationState conversationState, UserState userState, T dialog, ILogger<DialogBot<T>> logger, IStorageHelper storageHelper)
         {
+            _storageHelper = storageHelper;
             ConversationState = conversationState;
             UserState = userState;
             Dialog = dialog;
