@@ -26,17 +26,14 @@ namespace EchoBot1.Bots
 
         protected override async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
         {
-            foreach (var member in membersAdded)
-            {
-                if (member.Id != turnContext.Activity.Recipient.Id)
-                {
+           
                     // Check if the user already exists in storage
                     bool userExists = await _storageHelper.UserExistsAsync(turnContext.Activity.Recipient.Id);
 
                     if (userExists)
                     {
                         // User already exists, send a "welcome back" message
-                        var welcomeBackMessage = $"Bem-vindo de volta, {member.Name}! Em que posso ajudar hoje?";
+                        var welcomeBackMessage = $"Bem-vindo de volta! Em que posso ajudar hoje?";
                         await turnContext.SendActivityAsync(MessageFactory.Text(welcomeBackMessage), cancellationToken);
 
                     }
@@ -60,5 +57,5 @@ namespace EchoBot1.Bots
                 }
             }
         }
-    }
+    
 }
