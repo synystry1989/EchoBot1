@@ -26,16 +26,18 @@ namespace EchoBot1.Bots
 
         protected override async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
         {
-           
+            foreach (var member in membersAdded)
+            {
+                if (member.Id != turnContext.Activity.Recipient.Id)
+                {
                     // Check if the user already exists in storage
-                    bool userExists = await _storageHelper.UserExistsAsync(turnContext.Activity.Recipient.Id);
+                    bool userExists = await _storageHelper.UserExistsAsync(member.Id);
 
                     if (userExists)
                     {
                         // User already exists, send a "welcome back" message
-                        var welcomeBackMessage = $"Bem-vindo de volta! Em que posso ajudar hoje?";
+                        var welcomeBackMessage = $"Bem-vindo de volta, {member.Name}! Em que posso ajudar hoje?";
                         await turnContext.SendActivityAsync(MessageFactory.Text(welcomeBackMessage), cancellationToken);
-
                     }
                     else
                     {
@@ -48,14 +50,15 @@ namespace EchoBot1.Bots
                             Images = new List<CardImage> { new CardImage("C:\\Users\\synys\\Pictures\\Screenshots\\VMP.png") },
                             Buttons = new List<CardAction> { new CardAction(ActionTypes.OpenUrl, "Os nossos Produtos", value: "https://docs.microsoft.com/bot-framework") },
                         };
-                     
-                        var reply = MessageFactory.Attachment(heroCard.ToAttachment(), "Iremos recolher os seus dados de Seguida.");
-                   
-                        await turnContext.SendActivityAsync(reply, cancellationToken);
 
+                        var reply = MessageFactory.Attachment(heroCard.ToAttachment());
+                        await turnContext.SendActivityAsync(reply, cancellationToken);
                     }
                 }
             }
         }
-    
+    }
+}
+
+
 
