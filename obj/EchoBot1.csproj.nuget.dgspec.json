@@ -82,10 +82,6 @@
               "target": "Package",
               "version": "[4.22.7, )"
             },
-            "Microsoft.Bot.Connector": {
-              "target": "Package",
-              "version": "[4.22.7, )"
-            },
             "Microsoft.Identity.Client": {
               "target": "Package",
               "version": "[4.63.0, )"
@@ -97,6 +93,10 @@
             "MimeKit": {
               "target": "Package",
               "version": "[4.7.1, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
             },
             "OpenAI": {
               "target": "Package",
