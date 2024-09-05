@@ -25,8 +25,7 @@ namespace EchoBot1.Bots
         protected readonly BotState ConversationState;
         protected readonly BotState UserState;
         protected readonly ILogger Logger;
-        private readonly IConfiguration _configuration;
-    
+        private readonly IConfiguration _configuration;    
         private readonly IStorageHelper _storageHelper;
       
 

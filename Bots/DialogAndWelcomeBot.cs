@@ -36,7 +36,7 @@ namespace EchoBot1.Bots
                     if (userExists)
                     {
                         // User already exists, send a "welcome back" message
-                        var welcomeBackMessage = $"Bem-vindo de volta, {member.Name}! Em que posso ajudar hoje?";
+                        var welcomeBackMessage = $"Bem-vindo de volta! Em que posso ajudar hoje?";
                         await turnContext.SendActivityAsync(MessageFactory.Text(welcomeBackMessage), cancellationToken);
                     }
                     else

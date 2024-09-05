@@ -57,27 +57,14 @@ namespace EchoBot1.Dialogs
             var userEmail = (string)stepContext.Values["email"];
 
             // Save user data using IStorageHelper
-            await SaveUserDataAsync(stepContext.Context, userName, userEmail, cancellationToken);
+            await _storageHelper.SaveUserDataAsync(stepContext.Context, userName, userEmail, cancellationToken);
 
             await stepContext.Context.SendActivityAsync(MessageFactory.Text($"Thanks, {userName}. Your email {userEmail} has been saved."), cancellationToken);
 
             return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
         }
 
-        private async Task SaveUserDataAsync(ITurnContext turnContext, string name, string email, CancellationToken cancellationToken)
-        {
-            var userId = turnContext.Activity.From.Id;
-            var personalData = new PersonalDataEntity(userId, name, email);
-
-
-            await _storageHelper.InsertEntityAsync(_configuration["StorageAcc:UserProfileTable"], new PersonalDataEntity()
-            {
-                PartitionKey = userId,
-                RowKey = Guid.NewGuid().ToString(),
-                Email = email,
-                Name = name
-            });
-        }
+      
     }
 }
 

@@ -67,6 +67,7 @@ namespace EchoBot1.Dialogs
         {
             var userId = stepContext.Context.Activity.From.Id;
 
+          
             // Verifica se o usuário existe no armazenamento
             bool userExists = await _storageHelper.UserExistsAsync(userId);
 
@@ -102,6 +103,8 @@ namespace EchoBot1.Dialogs
 
         private async Task<DialogTurnResult> ActStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            var userId = stepContext.Context.Activity.From.Id;
+            var conversationId = stepContext.Context.Activity.Conversation.Id;
             var userMessage = (string)stepContext.Result;
             var chatContext = stepContext.Options as ChatContext ?? new ChatContext
             {
@@ -136,7 +139,7 @@ namespace EchoBot1.Dialogs
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text(response), cancellationToken);
 
                 // Salva o contexto de chat atualizado
-                await SaveChatContextAsync(stepContext, chatContext);
+                await _storageHelper.SaveChatContextToStorageAsync(_configuration["StorageAcc:GPTContextTable"], userId, conversationId, chatContext);
 
                 return await stepContext.NextAsync(chatContext, cancellationToken);
             }
@@ -144,27 +147,21 @@ namespace EchoBot1.Dialogs
 
         private async Task<DialogTurnResult> FinalStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            var conversationId = stepContext.Context.Activity.Conversation.Id;
             var chatContext = stepContext.Result as ChatContext;
             var promptMessage = "O que mais posso fazer por você?";
-
+            var userId = stepContext.Context.Activity.From.Id;
             // Registra a mensagem do assistente
             chatContext.Messages.Add(new Message { Role = "assistant", Content = promptMessage });
 
             await stepContext.Context.SendActivityAsync(MessageFactory.Text(promptMessage), cancellationToken);
 
             // Salva o contexto de chat atualizado
-            await SaveChatContextAsync(stepContext, chatContext);
+            await _storageHelper.SaveChatContextToStorageAsync(_configuration["StorageAcc:GPTContextTable"], userId, conversationId, chatContext);
 
             return await stepContext.ReplaceDialogAsync(InitialDialogId, chatContext, cancellationToken);
         }
-
-        private async Task SaveChatContextAsync(WaterfallStepContext stepContext, ChatContext chatContext)
-        {
-            var userId = stepContext.Context.Activity.From.Id;
-            var conversationId = stepContext.Context.Activity.Conversation.Id;
-            await _storageHelper.SaveChatContextToStorageAsync(_configuration["StorageAcc:GPTContextTable"], userId, conversationId, chatContext);
-        }
-
+      
         private async Task<string> GetOpenAiResponseAsync(string userMessage, CancellationToken cancellationToken)
         {
             using var client = new HttpClient

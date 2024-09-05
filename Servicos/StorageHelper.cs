@@ -1,10 +1,12 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using EchoBot1.Modelos;
+using Microsoft.Bot.Builder;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EchoBot1.Servicos
@@ -79,8 +81,21 @@ namespace EchoBot1.Servicos
             return tableClient;
         }
 
-     
-   
+        public async Task SaveUserDataAsync(ITurnContext turnContext, string name, string email, CancellationToken cancellationToken)
+        {
+            var userId = turnContext.Activity.From.Id;
+            var personalData = new PersonalDataEntity(userId, name, email);
+
+
+            await InsertEntityAsync(_configuration["StorageAcc:UserProfileTable"], new PersonalDataEntity()
+            {
+                PartitionKey = userId,
+                RowKey = Guid.NewGuid().ToString(),
+                Email = email,
+                Name = name
+            });
+        }
+
         public async Task SaveChatContextToStorageAsync(string tableName, string userId, string conversationId, ChatContext chatContext)
         {
             var chatContextEntity = new GptResponseEntity()

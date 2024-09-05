@@ -1,16 +1,19 @@
 ﻿using Azure.Data.Tables;
 using EchoBot1.Modelos;
+using Microsoft.Bot.Builder;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EchoBot1.Servicos
 {
     public interface IStorageHelper
     {
+        Task SaveUserDataAsync(ITurnContext turnContext, string name, string email, CancellationToken cancellationToken);
 
         Task<List<string>> GetPaginatedUserIdsAsync();
 
-           Task InsertEntityAsync<T>(string tableName, T entity) where T : ITableEntity;
+        Task InsertEntityAsync<T>(string tableName, T entity) where T : ITableEntity;
 
 
         Task<T> GetEntityAsync<T>(string tableName, string partitionKey, string rowKey) where T : class, ITableEntity, new();
