@@ -18,7 +18,6 @@ namespace EchoBot1.Servicos
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
  
-
         public async Task CreateTablesIfNotExistsAsync()
         {
             // Create UserContext table
@@ -80,10 +79,8 @@ namespace EchoBot1.Servicos
             return tableClient;
         }
 
-       
-
-      
-
+     
+   
         public async Task SaveChatContextToStorageAsync(string tableName, string userId, string conversationId, ChatContext chatContext)
         {
             var chatContextEntity = new GptResponseEntity()
@@ -124,6 +121,75 @@ namespace EchoBot1.Servicos
                 await Console.Out.WriteLineAsync($"Error checking if user exists: {ex.Message}");
                 return false;
             }
+        }
+        public async Task<ChatContext> InitializeChatContextAsync(string userId)
+        {
+            bool userExists = await UserExistsAsync(userId);
+            ChatContext chatContext = new ChatContext
+            {
+                Model = _configuration["OpenAI:Model"],
+                Messages = new List<Message>()
+            };
+
+            if (userExists)
+            {
+                var conversationIds = await GetPaginatedConversationIdsByUserIdAsync(userId);
+
+                foreach (var conversationId in conversationIds)
+                {
+                    var chatContextEntity = await GetEntityAsync<GptResponseEntity>(_configuration["StorageAcc:GPTContextTable"], userId, conversationId);
+                    if (chatContextEntity != null)
+                    {
+                        var previousMessages = JsonConvert.DeserializeObject<List<Message>>(chatContextEntity.UserContext);
+                        chatContext.Messages.AddRange(previousMessages);
+                    }
+                }
+            }
+            else
+            {
+
+                chatContext = new ChatContext()
+                {
+                    Model = _configuration["OpenAI:Model"],
+                    Messages = new List<Message>()
+                };
+            }
+
+            return chatContext;
+        }
+
+        //funcao igual a GetPaginatedConversationIdsByUserIdAsync mas para obter os ids dos users na tabela userprofiles
+        public async Task<List<string>> GetPaginatedUserIdsAsync()
+        {
+            var userIds = new List<string>();
+            var tableClient = await GetTableClient("UserProfiles");
+
+            var query = tableClient.QueryAsync<TableEntity>();
+
+            await foreach (var entity in query)
+            {
+                userIds.Add(entity.PartitionKey);
+            }
+
+            return userIds;
+        }
+
+
+
+
+        public async Task<List<string>> GetPaginatedConversationIdsByUserIdAsync(string userId)
+        {
+            var conversationIds = new List<string>();
+            var tableClient = await GetTableClient("UserContext");
+
+            var query = tableClient.QueryAsync<GptResponseEntity>(filter: $"PartitionKey eq '{userId}'");
+
+            await foreach (var entity in query)
+            {
+                conversationIds.Add(entity.RowKey);
+            }
+
+            return conversationIds;
         }
 
     }

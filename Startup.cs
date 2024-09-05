@@ -1,6 +1,6 @@
 ﻿using EchoBot1;
 using EchoBot1.Bots;
-using EchoBot1.Dialogos;
+
 using EchoBot1.Dialogs;
 using EchoBot1.Modelos;
 using EchoBot1.Servicos;
@@ -30,9 +30,8 @@ public class Startup
 
         // Use ConfigurationBotFrameworkAuthentication as the implementation for BotFrameworkAuthentication
         services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>(sp =>
-        {
-            var config = sp.GetRequiredService<IConfiguration>();
-            return new ConfigurationBotFrameworkAuthentication(config);
+        {        
+            return new ConfigurationBotFrameworkAuthentication(Configuration);
         });
 
         // Add bot adapter with error handling enabled
@@ -42,35 +41,37 @@ public class Startup
 
         // Add state management
         services.AddSingleton<IStorage, MemoryStorage>();
+        services.AddSingleton<UserState>();
+
         services.AddSingleton<ConversationState>();
 
 
         // Register KnowledgeBase
         services.AddSingleton<KnowledgeBase>(provider =>
         {
-            var knowledgeBase = new KnowledgeBase();
-            var config = provider.GetRequiredService<IConfiguration>();
-            var knowledgeBasePath = config["KnowledgeBasePath:path"];
+            var knowledgeBase = new KnowledgeBase();    
+            var knowledgeBasePath = Configuration["KnowledgeBasePath:path"];
             knowledgeBase.LoadResponses(knowledgeBasePath);
             return knowledgeBase;
         });
 
-   
 
         // Add controllers and JSON support
-        services.AddControllers().AddNewtonsoftJson();
+        services.AddHttpClient().AddControllers().AddNewtonsoftJson(options =>
+        {
+            options.SerializerSettings.MaxDepth = HttpHelper.BotMessageSerializerSettings.MaxDepth;
+        });
 
         // Register dialogs
         services.AddSingleton<PersonalDataDialog>();
-        services.AddSingleton<LearningModeDialog>();
-        services.AddSingleton<HelpDialog>();
+        services.AddSingleton<LearningModeDialog>();   
         services.AddSingleton<MainDialog>();
         
         // Register the bot
         services.AddTransient<IBot, DialogAndWelcomeBot<MainDialog>>();
 
         // Initialize the storage tables at startup
-       // services.BuildServiceProvider().GetRequiredService<IStorageHelper>().CreateTablesIfNotExistsAsync().Wait();
+
 
         var serviceProvider = services.BuildServiceProvider();
         var storageHelper = serviceProvider.GetRequiredService<IStorageHelper>();

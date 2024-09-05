@@ -29,13 +29,7 @@ namespace EchoBot1.Dialogs
         private readonly IStorageHelper _storageHelper;
         private readonly IConfiguration _configuration;
 
-        public MainDialog(
-            PersonalDataDialog personalDataDialog,
-            LearningModeDialog learningModeDialog,
-            KnowledgeBase knowledgeBase,
-            ILogger<MainDialog> logger,
-            IConfiguration configuration,
-            IStorageHelper storageHelper)
+        public MainDialog(PersonalDataDialog personalDataDialog,    LearningModeDialog learningModeDialog,    KnowledgeBase knowledgeBase,         ILogger<MainDialog> logger,  IConfiguration configuration,           IStorageHelper storageHelper)
             : base(nameof(MainDialog))
         {
             _knowledgeBase = knowledgeBase;
