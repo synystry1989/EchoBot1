@@ -17,10 +17,11 @@ namespace EchoBot1.Bots
     public class DialogAndWelcomeBot<T> : DialogBot<T>
         where T : Dialog
     {
-        private readonly StorageHelper _storageHelper;
-        public DialogAndWelcomeBot(ConversationState conversationState, UserState userState, T dialog, ILogger<DialogBot<T>> logger)
+        private readonly IStorageHelper _storageHelper;
+        public DialogAndWelcomeBot(IStorageHelper storageHelper, ConversationState conversationState, UserState userState, T dialog, ILogger<DialogBot<T>> logger)
             : base(conversationState, userState, dialog, logger)
         {
+            _storageHelper = storageHelper;
         }
 
         protected override async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
@@ -50,9 +51,9 @@ namespace EchoBot1.Bots
                             Images = new List<CardImage> { new CardImage("C:\\Users\\synys\\Pictures\\Screenshots\\VMP.png") },
                             Buttons = new List<CardAction> { new CardAction(ActionTypes.OpenUrl, "Os nossos Produtos", value: "https://docs.microsoft.com/bot-framework") },
                         };
-                        string dadosPessoais = "Para começar, vamos recolher as suas informações pessoais";
+                     
                         var reply = MessageFactory.Attachment(heroCard.ToAttachment());
-                        MessageFactory.Text(dadosPessoais);
+                   
                         await turnContext.SendActivityAsync(reply, cancellationToken);
 
                     }

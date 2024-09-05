@@ -5,6 +5,7 @@ namespace EchoBot1.Modelos
     public class UserProfileEntity: CommonEntity
     {
         string UserId { get; set; }
+
         string UserName { get; set; }
 
         string UserEmail { get; set; }

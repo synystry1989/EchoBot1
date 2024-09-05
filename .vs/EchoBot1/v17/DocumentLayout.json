@@ -3,48 +3,64 @@
   "WorkspaceRootPath": "C:\\Users\\synys\\source\\repos\\EchoBot1\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\bots\\dialogbot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:bots\\dialogbot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\bots\\dialogandwelcomebot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:bots\\dialogandwelcomebot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\dialogos\\maindialog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:dialogos\\maindialog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\bots\\dialogbot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:bots\\dialogbot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\bots\\echobot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:bots\\echobot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\servicos\\storagehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:servicos\\storagehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\dialogos\\userprofiledialog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:dialogos\\userprofiledialog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\modelos\\gptresponseentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:modelos\\gptresponseentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\modelos\\userprofileentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:modelos\\userprofileentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\servicos\\storagehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:servicos\\storagehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\servicos\\istoragehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:servicos\\istoragehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\dialogos\\maindialog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:dialogos\\maindialog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\dialogos\\modoaprendizagemdialog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:dialogos\\modoaprendizagemdialog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\modelos\\knowledgebase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:modelos\\knowledgebase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\modelos\\chatcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -53,10 +69,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\modelos\\commonentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:modelos\\commonentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\modelos\\knowledgebase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|solutionrelative:modelos\\knowledgebase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{15EB3627-68C4-40D6-8B10-D4AC1A24AFCD}|EchoBot1.csproj|c:\\users\\synys\\source\\repos\\echobot1\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -96,7 +108,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -124,39 +136,65 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 6,
+              "Title": "UserProfileEntity.cs",
+              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Modelos\\UserProfileEntity.cs",
+              "RelativeDocumentMoniker": "Modelos\\UserProfileEntity.cs",
+              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Modelos\\UserProfileEntity.cs*",
+              "RelativeToolTip": "Modelos\\UserProfileEntity.cs*",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-05T13:22:18.122Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "DialogBot.cs",
               "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Bots\\DialogBot.cs",
               "RelativeDocumentMoniker": "Bots\\DialogBot.cs",
               "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Bots\\DialogBot.cs",
               "RelativeToolTip": "Bots\\DialogBot.cs",
-              "ViewState": "AQIAAB0AAAAAAAAAAAAQwDIAAAAJAAAA",
+              "ViewState": "AQIAABUAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-05T09:01:28.467Z",
+              "WhenOpened": "2024-09-05T13:20:24.951Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MainDialog.cs",
-              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Dialogos\\MainDialog.cs",
-              "RelativeDocumentMoniker": "Dialogos\\MainDialog.cs",
-              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Dialogos\\MainDialog.cs",
-              "RelativeToolTip": "Dialogos\\MainDialog.cs",
-              "ViewState": "AQIAAC4AAAAAAAAAAAAqwDQAAAAkAAAA",
+              "DocumentIndex": 0,
+              "Title": "DialogAndWelcomeBot.cs",
+              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Bots\\DialogAndWelcomeBot.cs",
+              "RelativeDocumentMoniker": "Bots\\DialogAndWelcomeBot.cs",
+              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Bots\\DialogAndWelcomeBot.cs*",
+              "RelativeToolTip": "Bots\\DialogAndWelcomeBot.cs*",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAAABQAAABAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-05T00:25:55.332Z",
+              "WhenOpened": "2024-09-05T13:20:23.768Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 8,
+              "Title": "IStorageHelper.cs",
+              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Servicos\\IStorageHelper.cs",
+              "RelativeDocumentMoniker": "Servicos\\IStorageHelper.cs",
+              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Servicos\\IStorageHelper.cs",
+              "RelativeToolTip": "Servicos\\IStorageHelper.cs",
+              "ViewState": "AQIAABkAAAAAAAAAAAAswDEAAAAdAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-23T20:50:39.035Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "StorageHelper.cs",
               "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Servicos\\StorageHelper.cs",
               "RelativeDocumentMoniker": "Servicos\\StorageHelper.cs",
               "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Servicos\\StorageHelper.cs",
               "RelativeToolTip": "Servicos\\StorageHelper.cs",
-              "ViewState": "AQIAAF4AAAAA3/J9n408wHkAAAAAAAAA",
+              "ViewState": "AQIAAF4AAAAAAAAAAAAswGcAAABGAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-23T18:09:33.906Z",
               "EditorCaption": ""
@@ -164,45 +202,6 @@
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": ".gitignore",
-              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\.gitignore",
-              "RelativeDocumentMoniker": ".gitignore",
-              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\.gitignore",
-              "RelativeToolTip": ".gitignore",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAMAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-09-03T18:59:57.999Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "DialogAndWelcomeBot.cs",
-              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Bots\\DialogAndWelcomeBot.cs",
-              "RelativeDocumentMoniker": "Bots\\DialogAndWelcomeBot.cs",
-              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Bots\\DialogAndWelcomeBot.cs",
-              "RelativeToolTip": "Bots\\DialogAndWelcomeBot.cs",
-              "ViewState": "AQIAABcAAAAAAAAAAAAkwBkAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-04T23:09:40.187Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "EchoBot.cs",
-              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Bots\\EchoBot.cs",
-              "RelativeDocumentMoniker": "Bots\\EchoBot.cs",
-              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Bots\\EchoBot.cs",
-              "RelativeToolTip": "Bots\\EchoBot.cs",
-              "ViewState": "AQIAAEoAAAAAAAAAAAAiwCQAAABGAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-04T10:34:24.427Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
               "Title": "GptResponseEntity.cs",
               "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Modelos\\GptResponseEntity.cs",
               "RelativeDocumentMoniker": "Modelos\\GptResponseEntity.cs",
@@ -215,33 +214,111 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAIAAAA",
+              "DocumentIndex": 4,
+              "Title": "UserProfileDialog.cs",
+              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Dialogos\\UserProfileDialog.cs",
+              "RelativeDocumentMoniker": "Dialogos\\UserProfileDialog.cs",
+              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Dialogos\\UserProfileDialog.cs*",
+              "RelativeToolTip": "Dialogos\\UserProfileDialog.cs*",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-31T22:25:28.444Z",
+              "WhenOpened": "2024-09-05T13:23:05.795Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 3,
               "Title": "Startup.cs",
               "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Startup.cs",
               "RelativeDocumentMoniker": "Startup.cs",
-              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Startup.cs",
-              "RelativeToolTip": "Startup.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAEAAAAAAAAAA",
+              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Startup.cs*",
+              "RelativeToolTip": "Startup.cs*",
+              "ViewState": "AQIAABEAAAAAAAAAAAAywC4AAAA4AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-07T02:22:40.867Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 2,
+              "Title": "EchoBot.cs",
+              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Bots\\EchoBot.cs",
+              "RelativeDocumentMoniker": "Bots\\EchoBot.cs",
+              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Bots\\EchoBot.cs",
+              "RelativeToolTip": "Bots\\EchoBot.cs",
+              "ViewState": "AQIAACsAAAAAAAAAAAAqwL8AAAA/AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-04T10:34:24.427Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "MainDialog.cs",
+              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Dialogos\\MainDialog.cs",
+              "RelativeDocumentMoniker": "Dialogos\\MainDialog.cs",
+              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Dialogos\\MainDialog.cs",
+              "RelativeToolTip": "Dialogos\\MainDialog.cs",
+              "ViewState": "AQIAACUAAAAAAAAAAAAgwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-05T13:30:11.409Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ModoAprendizagemDialog.cs",
+              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Dialogos\\ModoAprendizagemDialog.cs",
+              "RelativeDocumentMoniker": "Dialogos\\ModoAprendizagemDialog.cs",
+              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Dialogos\\ModoAprendizagemDialog.cs",
+              "RelativeToolTip": "Dialogos\\ModoAprendizagemDialog.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-05T13:23:30.946Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "knowledgeBase.cs",
+              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Modelos\\knowledgeBase.cs",
+              "RelativeDocumentMoniker": "Modelos\\knowledgeBase.cs",
+              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Modelos\\knowledgeBase.cs",
+              "RelativeToolTip": "Modelos\\knowledgeBase.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwA8AAAAeAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-04T10:50:55.853Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAALAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-31T22:25:28.444Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": ".gitignore",
+              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\.gitignore",
+              "RelativeDocumentMoniker": ".gitignore",
+              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\.gitignore",
+              "RelativeToolTip": ".gitignore",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAMAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-09-03T18:59:57.999Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\appsettings.Development.json",
               "RelativeDocumentMoniker": "appsettings.Development.json",
@@ -254,7 +331,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 16,
               "Title": "CommonEntity.cs",
               "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Modelos\\CommonEntity.cs",
               "RelativeDocumentMoniker": "Modelos\\CommonEntity.cs",
@@ -267,7 +344,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 15,
               "Title": "ChatContext.cs",
               "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Modelos\\ChatContext.cs",
               "RelativeDocumentMoniker": "Modelos\\ChatContext.cs",
@@ -280,33 +357,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "knowledgeBase.cs",
-              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Modelos\\knowledgeBase.cs",
-              "RelativeDocumentMoniker": "Modelos\\knowledgeBase.cs",
-              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Modelos\\knowledgeBase.cs",
-              "RelativeToolTip": "Modelos\\knowledgeBase.cs",
-              "ViewState": "AQIAACkAAAAAAAAAAAAowAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-04T10:50:55.853Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "IStorageHelper.cs",
-              "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Servicos\\IStorageHelper.cs",
-              "RelativeDocumentMoniker": "Servicos\\IStorageHelper.cs",
-              "ToolTip": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Servicos\\IStorageHelper.cs",
-              "RelativeToolTip": "Servicos\\IStorageHelper.cs",
-              "ViewState": "AQIAABMAAAAAAAAAAAAswD8AAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-23T20:50:39.035Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 17,
               "Title": "launchSettings.json",
               "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "Properties\\launchSettings.json",
@@ -319,7 +370,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 18,
               "Title": "AdapterWithErrorHandler.cs",
               "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\AdapterWithErrorHandler.cs",
               "RelativeDocumentMoniker": "AdapterWithErrorHandler.cs",
@@ -332,7 +383,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 19,
               "Title": "EchoBot.cs",
               "DocumentMoniker": "C:\\Users\\synys\\AppData\\Local\\Temp\\.vsdbgsrc\\601989d3e4a2eecd4151730aa1ed60d7907874a119ecec27c5ca9be3c2af2388\\EchoBot.cs",
               "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\601989d3e4a2eecd4151730aa1ed60d7907874a119ecec27c5ca9be3c2af2388\\EchoBot.cs",
@@ -345,7 +396,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 20,
               "Title": "BotController.cs",
               "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\Controllers\\BotController.cs",
               "RelativeDocumentMoniker": "Controllers\\BotController.cs",
@@ -358,7 +409,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 21,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -371,7 +422,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 22,
               "Title": "EchoBot1.csproj",
               "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\EchoBot1.csproj",
               "RelativeDocumentMoniker": "EchoBot1.csproj",
@@ -384,7 +435,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 24,
               "Title": "README.md",
               "DocumentMoniker": "C:\\Users\\synys\\source\\repos\\EchoBot1\\README.md",
               "RelativeDocumentMoniker": "README.md",
@@ -397,7 +448,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 23,
               "Title": "NOTICE.TXT",
               "DocumentMoniker": "C:\\Users\\synys\\.nuget\\packages\\dotnetcore.npoi\\1.2.3\\contentFiles\\any\\netstandard2.0\\NOTICE.TXT",
               "RelativeDocumentMoniker": "..\\..\\..\\.nuget\\packages\\dotnetcore.npoi\\1.2.3\\contentFiles\\any\\netstandard2.0\\NOTICE.TXT",
