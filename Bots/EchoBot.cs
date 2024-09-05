@@ -50,7 +50,7 @@ namespace EchoBot1
                 };
 
                 // Load all previous conversations
-                var existingConversationIds = await _storageHelper.GetConversationIdsByUserIdAsync(userId);
+                var existingConversationIds = await _storageHelper.GetPaginatedConversationIdsByUserIdAsync(userId);
                 foreach (var existingConversationId in existingConversationIds)
                 {
                     var chatContextEntity = await _storageHelper.GetEntityAsync<GptResponseEntity>(_configuration["StorageAcc:GPTContextTable"], userId, existingConversationId);

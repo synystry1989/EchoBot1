@@ -22,83 +22,67 @@ namespace EchoBot1.Bots
     public class DialogBot<T> : ActivityHandler
         where T : Dialog
     {
-        protected readonly IConfiguration _configuration;
-        protected readonly Dialog Dialog;
-        protected readonly BotState ConversationState;
-        protected readonly BotState UserState;
-        protected readonly ILogger Logger;
-        protected readonly IStorageHelper _storageHelper;
 
-        public DialogBot(ConversationState conversationState, UserState userState, T dialog, ILogger<DialogBot<T>> logger)
+        private readonly ConversationState _conversationState;
+        private readonly Dialog _dialog;
+        private readonly IStorageHelper _storageHelper;
+        private readonly ILogger _logger;
+        private readonly IConfiguration _configuration;
+        private readonly IStatePropertyAccessor<DialogState> _dialogStateAccessor;
+        private readonly IStatePropertyAccessor<ChatContext> _chatContextAccessor;
+
+        public DialogBot(ConversationState conversationState, T dialog, IStorageHelper storageHelper, ILogger logger, IConfiguration configuration)
         {
-            ConversationState = conversationState;
-            UserState = userState;
-            Dialog = dialog;
-            Logger = logger;
+            _conversationState = conversationState;
+            _dialog = dialog;
+            _storageHelper = storageHelper;
+            _logger = logger;
+            _configuration = configuration;
+
+            _dialogStateAccessor = _conversationState.CreateProperty<DialogState>("DialogState");
+            _chatContextAccessor = _conversationState.CreateProperty<ChatContext>("ChatContext");
         }
 
-        public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default)
         {
-            
-            await base.OnTurnAsync(turnContext, cancellationToken);
+            // Load state properties
+            var dialogState = await _dialogStateAccessor.GetAsync(turnContext, () => new DialogState(), cancellationToken);
+            var chatContext = await _chatContextAccessor.GetAsync(turnContext, () => new ChatContext(), cancellationToken);
+            var userId = turnContext.Activity.From.Id;
+            var conversationId = turnContext.Activity.Conversation.Id;
+
+            if (turnContext.Activity.Type == ActivityTypes.Message)
+            {
+                // Save user's message to ChatContext
+               _storageHelper.AddMessageToChatContext(chatContext, "user", turnContext.Activity.Text);
+
+                // Execute the main dialog
+                await _dialog.RunAsync(turnContext, _dialogStateAccessor, cancellationToken);
+
+                // Save bot's response to ChatContext
+                var botResponse = turnContext.Activity.AsMessageActivity()?.Text;
+                if (!string.IsNullOrEmpty(botResponse))
+                {
+                   _storageHelper.AddMessageToChatContext(chatContext, "assistant", botResponse);
+                }
+
+                // Save chat context to persistent storage
+                await _storageHelper.SaveChatContextToStorageAsync(_configuration["StorageAcc:GPTContextTable"], userId, conversationId, chatContext);
+            }
 
             // Save any state changes that might have occurred during the turn.
-
-            // Step 5: Save updated chat context back to storage
-           
-            await ConversationState.SaveChangesAsync(turnContext, false, cancellationToken);
-            await UserState.SaveChangesAsync(turnContext, false, cancellationToken);
+            await _conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
         }
 
+
+
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
-        {
-       var conversationId = turnContext.Activity.Conversation.Id;
-
-            var userId = turnContext.Activity.From.Id;
+        {   
           
-            ChatContext chatContext = null;
-
-            // Step 1: Check if the user exists in the storage and aggregate messages from all conversations
-            bool userExists = await _storageHelper.UserExistsAsync(userId);
-
-            if (userExists)
-            {
-                // Initialize a new chat context to aggregate all messages
-                chatContext = new ChatContext()
-                {
-                    Model = _configuration["OpenAI:Model"],
-                    Messages = new List<Message>()
-                };
-
-                // Load all previous conversations
-                var existingConversationIds = await _storageHelper.GetConversationIdsByUserIdAsync(userId);
-                foreach (var existingConversationId in existingConversationIds)
-                {
-                    var chatContextEntity = await _storageHelper.GetEntityAsync<GptResponseEntity>(_configuration["StorageAcc:GPTContextTable"], userId, existingConversationId);
-                    if (chatContextEntity != null)
-                    {
-                        // Append each message from the previous context to the current chat context
-                        var previousMessages = JsonConvert.DeserializeObject<List<Message>>(chatContextEntity.UserContext);
-                        chatContext.Messages.AddRange(previousMessages);
-                    }
-                }
-            }
-         
-            // Step 2: Initialize a new chat context if no previous context exists
-            if (chatContext == null)
-            {
-                chatContext = new ChatContext()
-                {
-                    Model = _configuration["OpenAI:Model"],
-                    Messages = new List<Message>()
-                };
-            }
-           
-
-            Logger.LogInformation("Running dialog with Message Activity.");
+            _logger.LogInformation("Running dialog with Message Activity.");
 
             // Run the Dialog with the new message Activity.
-            await Dialog.RunAsync(turnContext, ConversationState.CreateProperty<DialogState>("DialogState"), cancellationToken);
+            await _dialog.RunAsync(turnContext, _conversationState.CreateProperty<DialogState>("DialogState"), cancellationToken);
         }
     }
 }

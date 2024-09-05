@@ -12,26 +12,31 @@ namespace EchoBot1.Servicos
     public class StorageHelper : IStorageHelper
     {
         private readonly IConfiguration _configuration;
-
-        public StorageHelper(IConfiguration configuration)
+    
+        public StorageHelper(IConfiguration configuration, IStorageHelper storageHelper)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        
         }
 
-        public async Task<TableClient> GetTableClient(string tableName)
+
+        public async Task CreateTablesIfNotExistsAsync()
         {
-            TableServiceClient tableServiceClient = new TableServiceClient(_configuration.GetConnectionString("StorageAcc"));
-            TableClient tableClient = tableServiceClient.GetTableClient(tableName: tableName);
-            await tableClient.CreateIfNotExistsAsync();
-            return tableClient;
+            // Create UserContext table
+            var userContextTableName = _configuration["StorageAcc:GPTContextTable"];
+            await GetTableClient(userContextTableName);
+
+            // Create UserProfiles table
+            var userProfileTableName = _configuration["StorageAcc:UserProfileTable"];
+            await GetTableClient(userProfileTableName);
         }
 
         public async Task InsertEntityAsync<T>(string tableName, T entity) where T : ITableEntity
         {
             try
             {
-                TableClient table = await GetTableClient(tableName);
-                await table.UpsertEntityAsync(entity);
+                var tableClient = await GetTableClient(tableName);
+                await tableClient.UpsertEntityAsync(entity);
             }
             catch (Exception ex)
             {
@@ -43,8 +48,8 @@ namespace EchoBot1.Servicos
         {
             try
             {
-                TableClient table = await GetTableClient(tableName);
-                return await table.GetEntityAsync<T>(partitionKey, rowKey);
+                var tableClient = await GetTableClient(tableName);
+                return await tableClient.GetEntityAsync<T>(partitionKey, rowKey);
             }
             catch (RequestFailedException ex) when (ex.Status == 404)
             {
@@ -52,8 +57,7 @@ namespace EchoBot1.Servicos
             }
             catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync($"Error getting entity from table storage: {ex.Message}");
-                return null;
+                throw new Exception($"Error getting entity from table storage: {ex.Message}");
             }
         }
 
@@ -61,47 +65,50 @@ namespace EchoBot1.Servicos
         {
             try
             {
-                TableClient table = await GetTableClient(tableName);
-                await table.DeleteEntityAsync(partitionKey, rowKey);
+                var tableClient = await GetTableClient(tableName);
+                await tableClient.DeleteEntityAsync(partitionKey, rowKey);
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error deleting entity from table storage: {ex.Message}");
             }
         }
-
-        public async Task<List<string>> GetConversationIdsByUserIdAsync(string userId)
+        public async Task<TableClient> GetTableClient(string tableName)
         {
-            try
-            {
-                var tableClient = await GetTableClient("UserContext");
-                var query = tableClient.QueryAsync<GptResponseEntity>(filter: $"PartitionKey eq '{userId}'");
-
-                var conversationIds = new List<string>();
-                await foreach (var entity in query)
-                {
-                    conversationIds.Add(entity.RowKey); // Use RowKey to get conversationId
-                }
-
-                return conversationIds;
-            }
-            catch (Exception ex)
-            {
-                await Console.Out.WriteLineAsync($"Error retrieving conversation IDs: {ex.Message}");
-                return new List<string>();
-            }
+            TableServiceClient tableServiceClient = new TableServiceClient(_configuration.GetConnectionString("StorageAcc"));
+            TableClient tableClient = tableServiceClient.GetTableClient(tableName: tableName);
+            await tableClient.CreateIfNotExistsAsync();
+            return tableClient;
         }
 
-        public async Task InsertChatContextAsync(string userId, string conversationId, string chatContext)
+
+
+
+
+        public async Task SaveChatContextToStorageAsync(string tableName, string userId, string conversationId, ChatContext chatContext)
         {
-            var entity = new GptResponseEntity(userId, conversationId,chatContext);
-            await InsertEntityAsync("UserContext", entity);
+            var chatContextEntity = new GptResponseEntity()
+            {
+                PartitionKey = userId,
+                RowKey = conversationId,
+                ConversationId = conversationId,
+                UserId = userId,
+                UserContext = JsonConvert.SerializeObject(chatContext.Messages)
+            };
+
+            await InsertEntityAsync(tableName, chatContextEntity);
         }
+
+        //public async Task InsertChatContextAsync(string userId, string conversationId, string chatContext)
+        //  {
+        //     var entity = new GptResponseEntity(userId, conversationId,chatContext);
+        //     await InsertEntityAsync("UserContext", entity);
+        // }
         public async Task<bool> UserExistsAsync(string userId)
         {
             try
             {
-                var tableClient = await GetTableClient("UserContext");
+                var tableClient = await GetTableClient("UserProfiles");
                 var query = tableClient.QueryAsync<TableEntity>(filter: $"PartitionKey eq '{userId}'");
 
                 await foreach (var entity in query)
@@ -120,5 +127,52 @@ namespace EchoBot1.Servicos
             }
         }
 
+        public async Task<ChatContext> InitializeChatContextAsync(string userId)
+        {
+            bool userExists = await UserExistsAsync(userId);
+            ChatContext chatContext = new ChatContext
+            {
+                Messages = new List<Message>()
+            };
+
+            if (userExists)
+            {
+                var conversationIds = await GetPaginatedConversationIdsByUserIdAsync(userId);
+
+                foreach (var conversationId in conversationIds)
+                {
+                    var chatContextEntity = await GetEntityAsync<GptResponseEntity>(_configuration["StorageAcc:GPTContextTable"], userId, conversationId);
+                    if (chatContextEntity != null)
+                    {
+                        var previousMessages = JsonConvert.DeserializeObject<List<Message>>(chatContextEntity.UserContext);
+                        chatContext.Messages.AddRange(previousMessages);
+                    }
+                }
+            }
+
+            return chatContext;
+        }
+
+        public async Task AddMessageToChatContext(ChatContext chatContext, string role, string content)
+        {
+            chatContext.Messages.Add(new Message { Role = role, Content = content });
+        }
+
+        public async Task<List<string>> GetPaginatedConversationIdsByUserIdAsync(string userId)
+        {
+            var conversationIds = new List<string>();
+            var tableClient = await GetTableClient("UserContext");
+
+            var query = tableClient.QueryAsync<GptResponseEntity>(filter: $"PartitionKey eq '{userId}'");
+
+            await foreach (var entity in query)
+            {
+                conversationIds.Add(entity.RowKey);
+            }
+
+            return conversationIds;
+        }
     }
+
+
 }

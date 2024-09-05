@@ -1,4 +1,5 @@
-﻿using Azure.Data.Tables;
+﻿
+using Azure.Data.Tables;
 using EchoBot1.Modelos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -40,7 +41,7 @@ namespace EchoBot1.Servicos
         /// </summary>
         /// <param name="userId">The userId for which to retrieve conversation IDs.</param>
         /// <returns>A list of conversation IDs associated with the specified userId.</returns>
-        Task<List<string>> GetConversationIdsByUserIdAsync(string userId);
+
 
         /// <summary>
         /// Gets the TableClient for a specified table.
@@ -56,8 +57,18 @@ namespace EchoBot1.Servicos
         /// <param name="conversationId">The conversationId associated with the ChatContext.</param>
         /// <param name="chatContext">The ChatContext object to insert or update.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task InsertChatContextAsync(string userId, string conversationId, string chatContext);
+        //Task InsertChatContextAsync(string userId, string conversationId, string chatContext);
 
         Task<bool> UserExistsAsync(string userId);
+
+        Task<ChatContext> InitializeChatContextAsync(string userId);
+
+        Task AddMessageToChatContext(ChatContext chatContext, string role, string content);
+
+        Task CreateTablesIfNotExistsAsync();
+
+        Task SaveChatContextToStorageAsync(string tableName, string userId, string conversationId, ChatContext chatContext);
+
+        Task<List<string>> GetPaginatedConversationIdsByUserIdAsync(string userId);
     }
 }
