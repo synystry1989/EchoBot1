@@ -26,14 +26,14 @@ namespace EchoBot1.Bots
         protected readonly BotState ConversationState;
         protected readonly BotState UserState;
         protected readonly ILogger Logger;
-        private readonly IConfiguration _configuration;    
+        private readonly IConfiguration _configuration;
         private readonly IStorageHelper _storageHelper;
-      
 
-        public DialogBot( IStorageHelper storageHelper, IConfiguration configuration,ConversationState conversationState, UserState userState, T dialog, ILogger<DialogBot<T>> logger)
+
+        public DialogBot(IStorageHelper storageHelper, IConfiguration configuration, ConversationState conversationState, UserState userState, T dialog, ILogger<DialogBot<T>> logger)
         {
             _configuration = configuration;
-            _storageHelper = storageHelper;         
+            _storageHelper = storageHelper;
             ConversationState = conversationState;
             UserState = userState;
             Dialog = dialog;
@@ -42,6 +42,8 @@ namespace EchoBot1.Bots
 
         public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
         {
+
+
             await base.OnTurnAsync(turnContext, cancellationToken);
 
             await ConversationState.SaveChangesAsync(turnContext, false, cancellationToken);
@@ -50,60 +52,71 @@ namespace EchoBot1.Bots
 
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
-         
-            var userId = turnContext.Activity.From.Id;
-            var conversationId = turnContext.Activity.Conversation.Id;
             ChatContext chatContext = null;
+            
+            PersonalDataEntity userProfile = new();
 
-            // Step 1: Check if the user exists in the storage and aggregate messages from all conversations
-            bool userExists = await _storageHelper.UserExistsAsync(userId);
+            userProfile.Id = turnContext.Activity.From.Id;
 
-            if (userExists)
-            {
-                // Initialize a new chat context to aggregate all messages
-                chatContext = new ChatContext()
+            var conversationId = turnContext.Activity.Conversation.Id;
+
+            var userMessage = turnContext.Activity.Text;
+
+            //se nao existe nome de utilizador nao existe utilizador dado que gravamos logo o userprofileid
+            if( await _storageHelper.GetUserNameAsync(userProfile.Id) != null)            
+                                 
                 {
-                    Model = _configuration["OpenAI:Model"],
-                    Messages = new List<Message>()
-                };
-
-                // Load all previous conversations
-                var existingConversationIds = await _storageHelper.GetPaginatedConversationIdsByUserIdAsync(userId);
-                foreach (var existingConversationId in existingConversationIds)
-                {
-                    var chatContextEntity = await _storageHelper.GetEntityAsync<GptResponseEntity>(_configuration["StorageAcc:GPTContextTable"], userId, existingConversationId);
-                    if (chatContextEntity != null)
+                    // Initialize a new chat context to aggregate all messages
+                    chatContext = new ChatContext()
                     {
-                        // Append each message from the previous context to the current chat context
-                        var previousMessages = JsonConvert.DeserializeObject<List<Message>>(chatContextEntity.UserContext);
-                        chatContext.Messages.AddRange(previousMessages);
+                        Model = _configuration["OpenAI:Model"],
+                        Messages = new List<Message>()
+                    };
+
+                    // Load all previous conversations
+                    var existingConversationIds = await _storageHelper.GetPaginatedConversationIdsByUserIdAsync(userProfile.Id);
+                    foreach (var existingConversationId in existingConversationIds)
+                    {
+                        var chatContextEntity = await _storageHelper.GetEntityAsync<GptResponseEntity>(_configuration["StorageAcc:GPTContextTable"], userProfile.Id, existingConversationId);
+                        if (chatContextEntity != null)
+                        {
+                            // Append each message from the previous context to the current chat context
+                            var previousMessages = JsonConvert.DeserializeObject<List<Message>>(chatContextEntity.UserContext);
+                            chatContext.Messages.AddRange(previousMessages);
+                        }
                     }
+
                 }
-            }
-
-            // Step 2: Initialize a new chat context if no previous context exists
-            if (chatContext == null)
-            {
-                chatContext = new ChatContext()
+                else
+                // Step 2: Initialize a new chat context if no previous context exists
+        
                 {
-                    Model = _configuration["OpenAI:Model"],
-                    Messages = new List<Message>()
-                };
+                    chatContext = new ChatContext()
+                    {
+                        Model = _configuration["OpenAI:Model"],
+                        Messages = new List<Message>()
+                    };
+                }
+                chatContext.Messages.Add(new Message() { Role = "user", Content = userMessage });
+
+            // Save the chat context of bot to storage
+            //await _storageHelper.SaveChatContextToStorageAsync(_configuration["StorageAcc:GPTContextTable"], userProfile.Id, conversationId, chatContext);
+
+
+
+                await _storageHelper.InsertEntityAsync(_configuration["StorageAcc:GPTContextTable"], new GptResponseEntity()
+                {
+                    PartitionKey = userProfile.Id,
+                    RowKey = conversationId,
+                    ConversationId = conversationId,
+                    UserId = userProfile.Id,
+                    UserContext = JsonConvert.SerializeObject(chatContext.Messages)
+                });
+
+                Logger.LogInformation("Running dialog with Message Activity.");
+
+                // Run the Dialog with the new message Activity.
+                await Dialog.RunAsync(turnContext, ConversationState.CreateProperty<DialogState>("DialogState"), cancellationToken);
             }
-
-            await _storageHelper.InsertEntityAsync(_configuration["StorageAcc:GPTContextTable"], new GptResponseEntity()
-            {
-                PartitionKey = userId,
-                RowKey = conversationId,
-                ConversationId = conversationId,
-                UserId = userId,
-                UserContext = JsonConvert.SerializeObject(chatContext.Messages)
-            });
-
-            Logger.LogInformation("Running dialog with Message Activity.");
-
-            // Run the Dialog with the new message Activity.
-            await Dialog.RunAsync(turnContext, ConversationState.CreateProperty<DialogState>("DialogState"), cancellationToken);
         }
     }
-}

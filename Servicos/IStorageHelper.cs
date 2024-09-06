@@ -9,7 +9,10 @@ namespace EchoBot1.Servicos
 {
     public interface IStorageHelper
     {
-        Task SaveUserDataAsync(ITurnContext turnContext, string name, string email, CancellationToken cancellationToken);
+
+        Task<string> GetUserNameAsync(string userId);
+
+        Task SaveUserDataAsync( string name, string email,string conversationId,string userId);
 
         Task<List<string>> GetPaginatedUserIdsAsync();
 
@@ -33,5 +36,12 @@ namespace EchoBot1.Servicos
         Task<ChatContext> InitializeChatContextAsync(string userId);
 
         Task<List<string>> GetPaginatedConversationIdsByUserIdAsync(string userId);
+
+        Task InsertUserAsync(string userId,string conversationId);
+
+
+
+
+
     }
 }

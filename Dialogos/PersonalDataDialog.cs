@@ -19,6 +19,8 @@ namespace EchoBot1.Dialogs
         private const string EmailStepMsgText = "qual é o teu email?";
         private readonly IStorageHelper _storageHelper;
         private readonly IConfiguration _configuration;
+        public IConfiguration Configuration => _configuration;
+
 
         public PersonalDataDialog(IStorageHelper storageHelper, IConfiguration configuration, ChatContext chatContext)
             : base(nameof(PersonalDataDialog))
@@ -41,8 +43,9 @@ namespace EchoBot1.Dialogs
         private async Task<DialogTurnResult> NameStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var promptMessage = MessageFactory.Text(NameStepMsgText, NameStepMsgText, InputHints.ExpectingInput);
+          
             _chatContext.Messages.Add(new Message() { Role = "Assistante", Content = NameStepMsgText });
-            _chatContext.Messages.Add(new Message() { Role = "user", Content = InputHints.ExpectingInput });
+
             return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = promptMessage }, cancellationToken);
         }
 
@@ -51,6 +54,9 @@ namespace EchoBot1.Dialogs
             stepContext.Values["nome"] = (string)stepContext.Result;
 
             var promptMessage = MessageFactory.Text(EmailStepMsgText, EmailStepMsgText, InputHints.ExpectingInput);
+        
+            _chatContext.Messages.Add(new Message() { Content = EmailStepMsgText }); 
+
             return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = promptMessage }, cancellationToken);
         }
 
@@ -62,7 +68,7 @@ namespace EchoBot1.Dialogs
             var userEmail = (string)stepContext.Values["email"];
 
             // Save user data using IStorageHelper
-            await _storageHelper.SaveUserDataAsync(stepContext.Context, userName, userEmail, cancellationToken);
+            await _storageHelper.SaveUserDataAsync(userName, userEmail, stepContext.Context.Activity.From.Id,stepContext.Context.Activity.Conversation.Id);
 
             await stepContext.Context.SendActivityAsync(MessageFactory.Text($"Thanks, {userName}. Your email {userEmail} has been saved."), cancellationToken);
 
@@ -72,4 +78,3 @@ namespace EchoBot1.Dialogs
       
     }
 }
-
