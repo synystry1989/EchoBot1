@@ -63,7 +63,7 @@ namespace EchoBot1.Bots
             var userMessage = turnContext.Activity.Text;
 
             //se nao existe nome de utilizador nao existe utilizador dado que gravamos logo o userprofileid
-            if( await _storageHelper.GetUserNameAsync(userProfile.Id) != null)            
+            if( await _storageHelper.GetUserNameAsync(userProfile.Id,conversationId) != null)            
                                  
                 {
                     // Initialize a new chat context to aggregate all messages
@@ -100,7 +100,7 @@ namespace EchoBot1.Bots
                 chatContext.Messages.Add(new Message() { Role = "user", Content = userMessage });
 
             // Save the chat context of bot to storage
-            //await _storageHelper.SaveChatContextToStorageAsync(_configuration["StorageAcc:GPTContextTable"], userProfile.Id, conversationId, chatContext);
+            await _storageHelper.SaveChatContextToStorageAsync(_configuration["StorageAcc:GPTContextTable"], userProfile.Id, conversationId, chatContext);
 
 
 

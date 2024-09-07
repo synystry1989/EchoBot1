@@ -81,24 +81,45 @@ namespace EchoBot1.Servicos
             await tableClient.CreateIfNotExistsAsync();
             return tableClient;
         }
-        //guardar com parametros
-        //public async Task SaveUserDataAsync( string name, string email,string userId)
-        //{         
-          
-        //    await InsertEntityAsync(_configuration["StorageAcc:UserProfileTable"], new PersonalDataEntity()
-        //    {
-        //        PartitionKey = userId,
-        //        RowKey = Guid.NewGuid().ToString(),
-        //        Email = email,
-        //        Name = name
-        //    });
-        //}
+       // guardar com parametros
+        public async Task SaveUserDataAsync(string name, string email, string userId)
+        {
+
+            await InsertEntityAsync(_configuration["StorageAcc:UserProfileTable"], new PersonalDataEntity()
+            {
+                PartitionKey = userId,
+                RowKey = Guid.NewGuid().ToString(),
+                Email = email,
+                Name = name
+            });
+        }
         // create similar to SaveUserDataAsync but not creating new one but completing by userid
         public async Task SaveUserDataAsync(string name, string email, string conversationId, string userId)
         {
-            var userProfile = new PersonalDataEntity(userId, name, email , conversationId);
-            await InsertEntityAsync(_configuration["StorageAcc:UserProfileTable"], userProfile);
-        }
+
+            var userProfile = new PersonalDataEntity()
+            {
+                PartitionKey = userId,
+                RowKey = conversationId,
+                Name = name,
+                Email = email,
+                Id = userId
+
+            };
+            //List<string> users = await GetPaginatedUserIdsAsync();
+            //// Save user data using IStorageHelper
+
+            //foreach (var user in users)
+            //{
+            //    if (user == userId)
+            //    {
+            //        userProfile.Email = email;
+            //        userProfile.Name = name;
+            //    }
+
+                await InsertEntityAsync(_configuration["StorageAcc:UserProfileTable"], userProfile);
+            }
+        
 
 
         //guardar com id
@@ -114,52 +135,66 @@ namespace EchoBot1.Servicos
            };
             await InsertEntityAsync("UserProfiles", entity);
         }
+        //funcao para carregar o chat context de um user
+        //public async Task<ChatContext> LoadChatContextAsync(string userId, string conversationId)
+        //{
+        //    var chatContextEntity = await GetEntityAsync<GptResponseEntity>(_configuration["StorageAcc:GPTContextTable"], userId, conversationId);
+        //    if (chatContextEntity != null)
+        //    {
+        //        return new ChatContext()
+        //        {
+        //            Model = _configuration["OpenAI:Model"],
+        //            Messages = JsonConvert.DeserializeObject<List<Message>>(chatContextEntity.UserContext)
+        //        };
+        //    }
+        //    return null;
+        //}
 
-        public async Task SaveChatContextToStorageAsync(string tableName, string userId, string conversationId, ChatContext chatContext)
-        {
-            var chatContextEntity = new GptResponseEntity()
-            {
-                PartitionKey = userId,
-                RowKey = conversationId,
-                ConversationId = conversationId,
-                UserId = userId,
-                UserContext = JsonConvert.SerializeObject(chatContext.Messages)
-            };
+        //public async Task SaveChatContextToStorageAsync(string tableName, string userId, string conversationId, ChatContext chatContext)
+        //{
+        //    var chatContextEntity = new GptResponseEntity()
+        //    {
+        //        PartitionKey = userId,
+        //        RowKey = conversationId,
+        //        ConversationId = conversationId,
+        //        UserId = userId,
+        //        UserContext = JsonConvert.SerializeObject(chatContext.Messages)
+        //    };
 
-            await InsertEntityAsync(tableName, chatContextEntity);
-        }
+        //    await InsertEntityAsync(tableName, chatContextEntity);
+        //}
 
      
-        public async Task<bool> UserExistsAsync(string userId)
-        {
-            try
-            {
-                var tableClient = await GetTableClient("UserProfiles");
-                var query = tableClient.QueryAsync<TableEntity>(filter: $"PartitionKey eq '{userId}'");
+        //public async Task<bool> UserExistsAsync(string userId)
+        //{
+        //    try
+        //    {
+        //        var tableClient = await GetTableClient("UserProfiles");
+        //        var query = tableClient.QueryAsync<TableEntity>(filter: $"PartitionKey eq '{userId}'");
 
-                await foreach (var entity in query)
-                {
-                    // If we find any entity with the given userId, return true
-                    return true;
-                }
+        //        await foreach (var entity in query)
+        //        {
+        //            // If we find any entity with the given userId, return true
+        //            return true;
+        //        }
 
-                // If no entity is found, return false
-                return false;
-            }
-            catch (Exception ex)
-            {
-                await Console.Out.WriteLineAsync($"Error checking if user exists: {ex.Message}");
-                return false;
-            }
-        }
-        //adicionar um user a tabela userprofiles
+        //        // If no entity is found, return false
+        //        return false;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await Console.Out.WriteLineAsync($"Error checking if user exists: {ex.Message}");
+        //        return false;
+        //    }
+        //}
+        ////adicionar um user a tabela userprofiles
         
 
-        public async Task<string> GetUserNameAsync(string userId)
+        public async Task<string> GetUserNameAsync(string userId,string conversationId)
         {
             try
             {
-                var personalData = await GetEntityAsync<PersonalDataEntity>(_configuration["StorageAcc:UserProfileTable"], userId, userId);
+                var personalData = await GetEntityAsync<PersonalDataEntity>(_configuration["StorageAcc:UserProfileTable"], userId, conversationId);
                 return personalData?.Name;
             }
             catch (Exception ex)
@@ -168,13 +203,13 @@ namespace EchoBot1.Servicos
                 return null;
             }
         }
-        public async Task InitializeChatContextAsync(string userId)
+        public async Task InitializeChatContextAsync(string userId,string userMessage,string conversationId)
         {
             
             PersonalDataEntity userProfile = new PersonalDataEntity();
             ChatContext chatContext = null;
-
-            if (await GetUserNameAsync(userId) != null)
+            
+            if (await GetUserNameAsync(userId,conversationId) != null)
 
             {
                 // Initialize a new chat context to aggregate all messages

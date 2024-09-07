@@ -49,6 +49,7 @@ namespace EchoBot1.Bots
                     };
 
                     var reply = MessageFactory.Attachment(heroCard.ToAttachment());
+
                     await turnContext.SendActivityAsync(reply, cancellationToken);
                 }
                 else

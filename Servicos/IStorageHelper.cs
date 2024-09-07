@@ -10,7 +10,7 @@ namespace EchoBot1.Servicos
     public interface IStorageHelper
     {
 
-        Task<string> GetUserNameAsync(string userId);
+        Task<string> GetUserNameAsync(string userId, string conversationId);
 
         Task SaveUserDataAsync( string name, string email,string conversationId,string userId);
 
@@ -27,13 +27,13 @@ namespace EchoBot1.Servicos
 
         //Task InsertChatContextAsync(string userId, string conversationId, string chatContext);
 
-        Task<bool> UserExistsAsync(string userId);
+       // Task<bool> UserExistsAsync(string userId);
 
         Task CreateTablesIfNotExistsAsync();
 
         Task SaveChatContextToStorageAsync(string tableName, string userId, string conversationId, ChatContext chatContext);
 
-        Task<ChatContext> InitializeChatContextAsync(string userId);
+        Task InitializeChatContextAsync(string userId, string userMessage);
 
         Task<List<string>> GetPaginatedConversationIdsByUserIdAsync(string userId);
 

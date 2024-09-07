@@ -18,7 +18,7 @@ namespace EchoBot1.Modelos
         public PersonalDataEntity( string userId, string name, string email,string conversationId)
         {
             PartitionKey = userId; // Using userId as PartitionKey to logically group user-related data
-            RowKey = conversationId; // Unique identifier for each record
+            RowKey = conversationId; 
             Name = name;
             Email = email;
             Id = userId;

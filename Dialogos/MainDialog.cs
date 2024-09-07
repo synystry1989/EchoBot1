@@ -61,7 +61,7 @@ namespace EchoBot1.Dialogs
                 {
                     userProfile.Id = stepContext.Context.Activity.From.Id;
                     // Tenta buscar o nome do usuário a partir do PersonalDataEntity
-                    userProfile.Name = await _storageHelper.GetUserNameAsync(userProfile.Id) ?? "defaultName";
+                    userProfile.Name = await _storageHelper.GetUserNameAsync(userProfile.Id,userProfile.RowKey) ?? "defaultName";
                 }
             }
 
@@ -87,7 +87,7 @@ namespace EchoBot1.Dialogs
         {
             var userId = stepContext.Context.Activity.From.Id;
             var conversationId = stepContext.Context.Activity.Conversation.Id;
-            var userMessage = (string)stepContext.Result;
+            var userMessage = stepContext.Context.Activity.Text;
             var chatContext = stepContext.Options as ChatContext ?? new ChatContext
             {
                 Model = _configuration["OpenAI:Model"],
