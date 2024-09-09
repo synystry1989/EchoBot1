@@ -62,6 +62,7 @@ namespace EchoBot1.Bots
                         if (userProfile.Id == user)
                         {
                             var welcomeBackMessage = $"Bem-vindo de volta, {userProfile.Name}!";
+
                             await turnContext.SendActivityAsync(MessageFactory.Text(welcomeBackMessage), cancellationToken);
                         }
                     }

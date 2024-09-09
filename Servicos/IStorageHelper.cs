@@ -18,7 +18,7 @@ namespace EchoBot1.Servicos
 
         Task InsertEntityAsync<T>(string tableName, T entity) where T : ITableEntity;
 
-
+        Task<ChatContext> LoadChatContextAsync(string userId, string conversationId);
         Task<T> GetEntityAsync<T>(string tableName, string partitionKey, string rowKey) where T : class, ITableEntity, new();
 
         Task DeleteEntityAsync(string tableName, string partitionKey, string rowKey);
@@ -31,9 +31,9 @@ namespace EchoBot1.Servicos
 
         Task CreateTablesIfNotExistsAsync();
 
-        Task SaveChatContextToStorageAsync(string tableName, string userId, string conversationId, ChatContext chatContext);
+        Task SaveChatContextToStorageAsync( string userId, string conversationId, ChatContext chatContext);
 
-        Task InitializeChatContextAsync(string userId, string userMessage);
+        Task InitializeChatContextAsync(string userId, string userMessage, string conversationId,ChatContext chatContext);
 
         Task<List<string>> GetPaginatedConversationIdsByUserIdAsync(string userId);
 

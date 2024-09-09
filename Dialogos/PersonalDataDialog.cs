@@ -90,11 +90,15 @@ namespace EchoBot1.Dialogs
             await _storageHelper.SaveUserDataAsync(userName, userEmail, stepContext.Context.Activity.From.Id, stepContext.Context.Activity.Conversation.Id);
 
             // Salva o chatContext atualizado
-            await _storageHelper.SaveChatContextToStorageAsync(_configuration["StorageAcc:GPTContextTable"], stepContext.Context.Activity.From.Id, stepContext.Context.Activity.Conversation.Id, chatContext);
+           
 
             await stepContext.Context.SendActivityAsync(MessageFactory.Text($"Obrigado, {userName}. Seu email {userEmail} foi salvo."), cancellationToken);
+           
+            await _storageHelper.SaveChatContextToStorageAsync(stepContext.Context.Activity.From.Id, stepContext.Context.Activity.Conversation.Id, chatContext);
+            //new DialogTurnResult(DialogTurnStatus.Waiting);
 
             return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
+             
         }
 
     }

@@ -62,8 +62,9 @@ namespace EchoBot1.Bots
 
             var userMessage = turnContext.Activity.Text;
 
+            var userName = await _storageHelper.GetUserNameAsync(userProfile.Id, conversationId);
             //se nao existe nome de utilizador nao existe utilizador dado que gravamos logo o userprofileid
-            if( await _storageHelper.GetUserNameAsync(userProfile.Id,conversationId) != null)            
+            if ( userName != "defaultName")            
                                  
                 {
                     // Initialize a new chat context to aggregate all messages
@@ -73,7 +74,7 @@ namespace EchoBot1.Bots
                         Messages = new List<Message>()
                     };
 
-                    // Load all previous conversations
+                    // Load all previous conversationsa
                     var existingConversationIds = await _storageHelper.GetPaginatedConversationIdsByUserIdAsync(userProfile.Id);
                     foreach (var existingConversationId in existingConversationIds)
                     {
@@ -100,18 +101,18 @@ namespace EchoBot1.Bots
                 chatContext.Messages.Add(new Message() { Role = "user", Content = userMessage });
 
             // Save the chat context of bot to storage
-            await _storageHelper.SaveChatContextToStorageAsync(_configuration["StorageAcc:GPTContextTable"], userProfile.Id, conversationId, chatContext);
+            await _storageHelper.SaveChatContextToStorageAsync( userProfile.Id, conversationId, chatContext);
 
 
 
-                await _storageHelper.InsertEntityAsync(_configuration["StorageAcc:GPTContextTable"], new GptResponseEntity()
-                {
-                    PartitionKey = userProfile.Id,
-                    RowKey = conversationId,
-                    ConversationId = conversationId,
-                    UserId = userProfile.Id,
-                    UserContext = JsonConvert.SerializeObject(chatContext.Messages)
-                });
+                //await _storageHelper.InsertEntityAsync(_configuration["StorageAcc:GPTContextTable"], new GptResponseEntity()
+                //{
+                //    PartitionKey = userProfile.Id,
+                //    RowKey = conversationId,
+                //    ConversationId = conversationId,
+                //    UserId = userProfile.Id,
+                //    UserContext = JsonConvert.SerializeObject(chatContext.Messages)
+                //});
 
                 Logger.LogInformation("Running dialog with Message Activity.");
 

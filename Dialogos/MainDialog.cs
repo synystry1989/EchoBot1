@@ -60,12 +60,13 @@ namespace EchoBot1.Dialogs
                 if (user == stepContext.Context.Activity.From.Id)
                 {
                     userProfile.Id = stepContext.Context.Activity.From.Id;
+                    userProfile.RowKey = stepContext.Context.Activity.Conversation.Id;
                     // Tenta buscar o nome do usuário a partir do PersonalDataEntity
                     userProfile.Name = await _storageHelper.GetUserNameAsync(userProfile.Id,userProfile.RowKey) ?? "defaultName";
                 }
             }
 
-            if (userProfile.Name == "defaultName")
+            if (userProfile.Name == "defaultName" )
             {
                 // Inicia o PersonalDataDialog se o usuário for novo
                 return await stepContext.BeginDialogAsync(nameof(PersonalDataDialog), null, cancellationToken);
@@ -80,19 +81,18 @@ namespace EchoBot1.Dialogs
             }
         }
 
-        // Método auxiliar para obter o nome do usuário do PersonalDataEntity
+       
 
 
         private async Task<DialogTurnResult> ActStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var userId = stepContext.Context.Activity.From.Id;
             var conversationId = stepContext.Context.Activity.Conversation.Id;
+          
+
+        ChatContext chatContext =    await _storageHelper.LoadChatContextAsync(userId, conversationId);
+
             var userMessage = stepContext.Context.Activity.Text;
-            var chatContext = stepContext.Options as ChatContext ?? new ChatContext
-            {
-                Model = _configuration["OpenAI:Model"],
-                Messages = new List<Message>()
-            };
 
             if (userMessage.ToLower().Contains("learn"))
             {
@@ -118,10 +118,11 @@ namespace EchoBot1.Dialogs
 
                 // Registra a resposta do assistente
                 chatContext.Messages.Add(new Message { Role = "assistant", Content = response });
+
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text(response), cancellationToken);
 
                 // Salva o contexto de chat atualizado
-                await _storageHelper.SaveChatContextToStorageAsync(_configuration["StorageAcc:GPTContextTable"], userId, conversationId, chatContext);
+                await _storageHelper.SaveChatContextToStorageAsync( userId, conversationId, chatContext);
 
                 return await stepContext.NextAsync(chatContext, cancellationToken);
             }
@@ -139,7 +140,7 @@ namespace EchoBot1.Dialogs
             await stepContext.Context.SendActivityAsync(MessageFactory.Text(promptMessage), cancellationToken);
 
             // Salva o contexto de chat atualizado
-            await _storageHelper.SaveChatContextToStorageAsync(_configuration["StorageAcc:GPTContextTable"], userId, conversationId, chatContext);
+            await _storageHelper.SaveChatContextToStorageAsync( userId, conversationId, chatContext);
 
             return await stepContext.ReplaceDialogAsync(InitialDialogId, chatContext, cancellationToken);
         }
