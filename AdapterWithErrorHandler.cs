@@ -1,10 +1,13 @@
-﻿// Generated with Bot Builder V4 SDK Template for Visual Studio CoreBot v4.22.0
+// Generated with Bot Builder V4 SDK Template for Visual Studio CoreBot v4.22.0
 
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Builder.TraceExtensions;
 using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Identity.Web;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace EchoBot1
 {
